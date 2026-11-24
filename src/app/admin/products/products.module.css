@@ -59,8 +59,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--admin-panel-bg, #fef7f7);
+  border: 1px solid var(--admin-panel-border, #020a1e);
   border-radius: 10px;
   padding: 12px 16px;
   margin-bottom: 20px;
@@ -106,8 +106,8 @@
 }
 
 .tableCard {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--admin-panel-bg, #fef7f7);
+  border: 1px solid var(--admin-panel-border, #020a1e);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
@@ -125,7 +125,7 @@
 }
 
 .th {
-  background: #f8fafc;
+  background: var(--admin-table-head-bg, #fdeeee);
   padding: 14px 18px;
   font-size: 0.75rem;
   font-weight: 700;
@@ -142,7 +142,7 @@
 }
 
 .tr:hover {
-  background: #f8fafc;
+  background: #fdf5f5;
 }
 
 .td {
@@ -322,7 +322,8 @@
 }
 
 .modal {
-  background: #ffffff;
+  background: var(--admin-panel-bg, #fef7f7);
+  border: 1px solid var(--admin-panel-border, #020a1e);
   border-radius: 14px;
   width: 100%;
   max-width: 420px;
@@ -376,8 +377,8 @@
 }
 
 .cancelBtn {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--admin-panel-bg, #fef7f7);
+  border: 1px solid var(--admin-panel-border, #020a1e);
   color: #475569;
   border-radius: 8px;
   padding: 9px 16px;
@@ -473,8 +474,8 @@
 }
 
 .formSection {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--admin-panel-bg, #fef7f7);
+  border: 1px solid var(--admin-panel-border, #020a1e);
   border-radius: 12px;
   padding: 22px 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);

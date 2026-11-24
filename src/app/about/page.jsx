@@ -5,17 +5,16 @@ import Footer from '@/components/Footer/Footer';
 import PageHeroBanner from '@/components/PageHeroBanner/PageHeroBanner';
 import { Store, PackageCheck, BadgeCheck, Wallet } from 'lucide-react';
 import WhyChooseUs from '@/app/home/components/WhyChooseUs';
-import BrandTagline from '@/components/BrandTagline/BrandTagline';
 import {
   BRAND,
   BRAND_DOMAIN,
-  BRAND_LOGO,
-  BRAND_LOGO_HEIGHT,
-  BRAND_LOGO_WIDTH,
   LEGACY_BRAND,
   POWERED_BY_TAGLINE,
   pageMetadata,
 } from '@/lib/seo';
+
+const ABOUT_STORY_BANNER =
+  'https://chairvala.b-cdn.net/basic_assets/Shree%20Krishna%20Steel%20Banner%20(1).png';
 
 export const metadata = pageMetadata({
   title: `About Us | ${BRAND}`,
@@ -69,33 +68,27 @@ export default function AboutPage() {
           </div>
 
           <div className={styles.storyContent}>
-            <div className={styles.storyMedia}>
+            <div className={styles.storyBanner}>
               <Image
-                src={BRAND_LOGO}
-                alt={`${BRAND} logo`}
-                width={BRAND_LOGO_WIDTH}
-                height={BRAND_LOGO_HEIGHT}
-                sizes="(max-width: 900px) 100vw, 720px"
-                className={styles.storyImage}
-                unoptimized
+                src={ABOUT_STORY_BANNER}
+                alt={`${LEGACY_BRAND} banner`}
+                width={1400}
+                height={788}
+                sizes="(max-width: 900px) 100vw, min(900px, 90vw)"
+                className={styles.storyBannerImg}
+                priority
               />
-              <BrandTagline className={styles.storyTagline} />
-              <div className={styles.legacyBrandBlock}>
-                <p className={styles.legacyBrandLabel}>{POWERED_BY_TAGLINE}</p>
-                <p className={styles.legacyBrandName}>{LEGACY_BRAND}</p>
-              </div>
             </div>
             <div className={styles.storyText}>
               <p className={styles.paragraph}>
                 {BRAND_DOMAIN} is the online home for quality plastic and steel products at honest
-                prices.
-                From plastic chairs and stools to household plastic items, steel racks and steel
-                furniture — we keep everyday essentials under one roof.
+                prices. From plastic chairs and stools to household plastic items, steel racks and
+                steel furniture — we keep everyday essentials under one roof.
               </p>
               <p className={styles.paragraph}>
-                Our catalog and fulfilment are backed by <strong>{LEGACY_BRAND}</strong>, a trusted
-                retail and wholesale name serving homes, shops, offices, restaurants and events
-                with the same quality you expect in store.
+                Our catalog and fulfilment are backed by {LEGACY_BRAND}, a trusted retail and
+                wholesale name serving homes, shops, offices, restaurants and events with the same
+                quality you expect in store.
               </p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import styles from './admin.module.css';
@@ -204,6 +204,7 @@ export default function AdminShell({ children }) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const contentRef = useRef(null);
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 860px)');
     const sync = () => {
@@ -231,6 +232,10 @@ export default function AdminShell({ children }) {
     if (isMobile) setCollapsed(true);
   }, [pathname, isMobile]);
 
+  useEffect(() => {
+    contentRef.current?.scrollTo(0, 0);
+  }, [pathname]);
+
   // Login and switch pages render full-screen without sidebar/header shell
   if (BARE_PAGES.includes(pathname)) {
     return <>{children}</>;
@@ -246,7 +251,10 @@ export default function AdminShell({ children }) {
   const isActive = (href) => pathname === href || pathname.startsWith(href + '/');
 
   return (
-    <div className={styles.adminLayout}>
+    <div
+      className={styles.adminLayout}
+      data-admin-sidebar-collapsed={sidebarCompact ? 'true' : undefined}
+    >
       <aside
         className={`${styles.sidebar} ${collapsed && !isMobile ? styles.sidebarCollapsed : ''} ${
           isMobile && !collapsed ? styles.sidebarMobileOpen : ''
@@ -330,13 +338,13 @@ export default function AdminShell({ children }) {
                 <IconMenu />
               </button>
             )}
-            <div className={styles.headerTitle}>Management Portal</div>
+            <div className={styles.headerTitle}>Shree Ram Steel</div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '0.9rem', color: '#64748b' }}>admin</span>
-          </div>
+          <span className={styles.headerUser}>Chairvala</span>
         </header>
-        <div className={styles.contentBody}>{children}</div>
+        <div ref={contentRef} className={styles.contentBody}>
+          {children}
+        </div>
       </div>
     </div>
   );

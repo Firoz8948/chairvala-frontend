@@ -48,7 +48,8 @@ const RANGE_CAPTION = {
   '12m': 'last 12 months',
 };
 
-const ACCENT = '#5c3d2e';
+const BRAND_BLUE = '#0000a5';
+const BRAND_MAROON = '#a50000';
 
 const inr = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 });
 
@@ -115,6 +116,15 @@ export default function SalesChart() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isNarrow, setIsNarrow] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)');
+    const sync = () => setIsNarrow(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -141,19 +151,38 @@ export default function SalesChart() {
   const current = data?.totals?.[metric.id] ?? 0;
   const previous = data?.previous?.[metric.id] ?? 0;
   const change = percentChange(current, previous);
-  const hasSales = points.some((p) => p.orders > 0);
+  const hasSales = points.some((p) => p.orders > 0 || Number(p[metric.id]) > 0);
   const manyPoints = points.length > 12;
 
-  const axisTick = { fill: '#64748b', fontSize: 12 };
+  const yMax = useMemo(() => {
+    const vals = points.map((p) => Number(p[metric.id]) || 0);
+    const max = Math.max(...vals, 0);
+    if (max <= 0) return metric.money ? 10000 : 10;
+    return Math.ceil(max * 1.12);
+  }, [points, metric.id, metric.money]);
+
+  const axisTick = { fill: '#8f4444', fontSize: isNarrow ? 9 : 11, fontWeight: 500 };
   const yFormatter = (v) => (metric.money ? formatCompactMoney(v) : inr.format(v));
+
+  const gridStroke = '#e8d4d4';
+  const axisStroke = '#c9a8a8';
+
+  const chartMargin = isNarrow
+    ? { top: 6, right: 4, left: 0, bottom: 0 }
+    : { top: 12, right: 12, left: 4, bottom: 0 };
+  const xInterval = isNarrow || manyPoints ? 'preserveStartEnd' : 0;
+  const xMinTickGap = isNarrow ? 4 : 12;
+  const yAxisWidth = isNarrow ? 40 : 56;
+  const maxBarSize = isNarrow ? 24 : 42;
+  const metricOptions = isNarrow
+    ? METRICS.map((m) => (m.id === 'avg_order_value' ? { ...m, label: 'Avg.' } : m))
+    : METRICS;
 
   return (
     <section className={styles.salesCard}>
       <div className={styles.salesHeader}>
-        <div>
-          <h2 className={styles.activityTitle} style={{ marginBottom: 4 }}>
-            Sales overview
-          </h2>
+        <div className={styles.salesHeaderIntro}>
+          <h2 className={styles.salesTitle}>Sales overview</h2>
           <p className={styles.salesCaption}>
             {metric.label} · {RANGE_CAPTION[range]}
           </p>
@@ -169,26 +198,43 @@ export default function SalesChart() {
               }`}
             >
               {change > 0 ? '▲' : change < 0 ? '▼' : '—'} {Math.abs(change).toFixed(1)}%
-              <span className={styles.changeHint}>vs previous period</span>
+              <span className={styles.changeHint}>vs prev. period</span>
             </span>
           ) : data ? (
-            <span className={`${styles.changePill} ${styles.changeUp}`}>
-              New <span className={styles.changeHint}>no sales in previous period</span>
+            <span className={`${styles.changePill} ${styles.changeFlat}`}>
+              — <span className={styles.changeHint}>no prior period data</span>
             </span>
           ) : null}
         </div>
       </div>
 
-      <div className={styles.salesFilters}>
-        <Segmented options={RANGES} value={range} onChange={setRange} ariaLabel="Date range" />
-        <Segmented options={METRICS} value={metricId} onChange={setMetricId} ariaLabel="Metric" />
-        <Segmented options={SCOPES} value={scope} onChange={setScope} ariaLabel="Sales scope" />
-        <Segmented
-          options={CHART_TYPES}
-          value={chartType}
-          onChange={setChartType}
-          ariaLabel="Chart type"
-        />
+      <div className={styles.salesToolbar}>
+        <div className={`${styles.salesFilterGroup} ${styles.salesFilterGroupWide}`}>
+          <span className={styles.salesFilterLabel}>Period</span>
+          <Segmented options={RANGES} value={range} onChange={setRange} ariaLabel="Date range" />
+        </div>
+        <div className={styles.salesFilterGroup}>
+          <span className={styles.salesFilterLabel}>Metric</span>
+          <Segmented
+            options={metricOptions}
+            value={metricId}
+            onChange={setMetricId}
+            ariaLabel="Metric"
+          />
+        </div>
+        <div className={styles.salesFilterGroup}>
+          <span className={styles.salesFilterLabel}>Scope</span>
+          <Segmented options={SCOPES} value={scope} onChange={setScope} ariaLabel="Sales scope" />
+        </div>
+        <div className={styles.salesFilterGroup}>
+          <span className={styles.salesFilterLabel}>Chart</span>
+          <Segmented
+            options={CHART_TYPES}
+            value={chartType}
+            onChange={setChartType}
+            ariaLabel="Chart type"
+          />
+        </div>
       </div>
 
       <div className={styles.chartArea}>
@@ -201,63 +247,68 @@ export default function SalesChart() {
             <div className={`${styles.chartInner} ${loading ? styles.chartLoading : ''}`}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
-                  <BarChart data={points} margin={{ top: 12, right: 12, left: 4, bottom: 0 }}>
-                    <CartesianGrid stroke="#eef2f6" vertical={false} />
+                  <BarChart data={points} margin={chartMargin}>
+                    <CartesianGrid stroke={gridStroke} vertical={false} />
                     <XAxis
                       dataKey="label"
                       tick={axisTick}
                       tickLine={false}
-                      axisLine={{ stroke: '#e2e8f0' }}
-                      interval={manyPoints ? 'preserveStartEnd' : 0}
-                      minTickGap={12}
+                      axisLine={{ stroke: axisStroke }}
+                      interval={xInterval}
+                      minTickGap={xMinTickGap}
                     />
                     <YAxis
                       tick={axisTick}
                       tickLine={false}
                       axisLine={false}
-                      width={64}
+                      width={yAxisWidth}
+                      domain={[0, yMax]}
+                      tickCount={isNarrow ? 4 : hasSales ? 5 : 3}
                       tickFormatter={yFormatter}
-                      allowDecimals={metric.money}
+                      allowDecimals={false}
                     />
                     <Tooltip
-                      cursor={{ fill: 'rgba(92, 61, 46, 0.06)' }}
+                      cursor={{ fill: 'rgba(0, 0, 165, 0.08)' }}
                       content={<ChartTooltip metric={metric} />}
                     />
                     <Bar
                       dataKey={metric.id}
-                      fill={ACCENT}
+                      fill={BRAND_BLUE}
                       radius={[6, 6, 0, 0]}
-                      maxBarSize={42}
+                      maxBarSize={maxBarSize}
                       animationDuration={600}
                     />
                   </BarChart>
                 ) : (
-                  <ComposedChart data={points} margin={{ top: 12, right: 12, left: 4, bottom: 0 }}>
+                  <ComposedChart data={points} margin={chartMargin}>
                     <defs>
                       <linearGradient id="salesFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={ACCENT} stopOpacity={0.22} />
-                        <stop offset="100%" stopColor={ACCENT} stopOpacity={0} />
+                        <stop offset="0%" stopColor={BRAND_BLUE} stopOpacity={0.2} />
+                        <stop offset="55%" stopColor={BRAND_MAROON} stopOpacity={0.08} />
+                        <stop offset="100%" stopColor={BRAND_BLUE} stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid stroke="#eef2f6" vertical={false} />
+                    <CartesianGrid stroke={gridStroke} vertical={false} />
                     <XAxis
                       dataKey="label"
                       tick={axisTick}
                       tickLine={false}
-                      axisLine={{ stroke: '#e2e8f0' }}
-                      interval={manyPoints ? 'preserveStartEnd' : 0}
-                      minTickGap={12}
+                      axisLine={{ stroke: axisStroke }}
+                      interval={xInterval}
+                      minTickGap={xMinTickGap}
                     />
                     <YAxis
                       tick={axisTick}
                       tickLine={false}
                       axisLine={false}
-                      width={64}
+                      width={yAxisWidth}
+                      domain={[0, yMax]}
+                      tickCount={isNarrow ? 4 : hasSales ? 5 : 3}
                       tickFormatter={yFormatter}
-                      allowDecimals={metric.money}
+                      allowDecimals={false}
                     />
                     <Tooltip
-                      cursor={{ stroke: ACCENT, strokeDasharray: '4 4', strokeOpacity: 0.5 }}
+                      cursor={{ stroke: BRAND_BLUE, strokeDasharray: '4 4', strokeOpacity: 0.45 }}
                       content={<ChartTooltip metric={metric} />}
                     />
                     <Area
@@ -270,10 +321,14 @@ export default function SalesChart() {
                     <Line
                       type="monotone"
                       dataKey={metric.id}
-                      stroke={ACCENT}
+                      stroke={BRAND_BLUE}
                       strokeWidth={2.5}
-                      dot={manyPoints ? false : { r: 3.5, fill: '#fff', stroke: ACCENT, strokeWidth: 2 }}
-                      activeDot={{ r: 6, fill: ACCENT, stroke: '#fff', strokeWidth: 2 }}
+                      dot={
+                        manyPoints
+                          ? false
+                          : { r: 3.5, fill: '#fff', stroke: BRAND_BLUE, strokeWidth: 2 }
+                      }
+                      activeDot={{ r: 6, fill: BRAND_MAROON, stroke: '#fff', strokeWidth: 2 }}
                       animationDuration={600}
                     />
                   </ComposedChart>
@@ -298,7 +353,12 @@ export default function SalesChart() {
             <strong>{inr.format(data.totals.orders)}</strong>
           </div>
           <div>
-            <span className={styles.footerLabel}>Avg. order value</span>
+            <span className={styles.footerLabel}>
+              <span className={styles.footerLabelFull}>Avg. order value</span>
+              <span className={styles.footerLabelShort} aria-hidden="true">
+                Avg. order
+              </span>
+            </span>
             <strong>{formatMoney(data.totals.avg_order_value)}</strong>
           </div>
         </div>

@@ -1,6 +1,6 @@
 .card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--admin-panel-bg, #fef7f7);
+  border: 1px solid var(--admin-panel-border, #020a1e);
   border-radius: 12px;
   padding: 24px;
   max-width: 560px;

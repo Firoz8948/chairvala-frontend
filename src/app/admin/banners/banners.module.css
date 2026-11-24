@@ -108,10 +108,10 @@
 }
 
 .card {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--admin-panel-border, #020a1e);
   border-radius: 10px;
   overflow: hidden;
-  background: #ffffff;
+  background: var(--admin-panel-bg, #fef7f7);
   transition: opacity 0.15s;
 }
 

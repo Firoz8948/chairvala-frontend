@@ -12,6 +12,17 @@ const formatPrice = (value) => {
   return `₹${num.toLocaleString('en-IN')}`;
 };
 
+const DASHBOARD_STAT_ICONS = {
+  orders:
+    'https://chairvala.b-cdn.net/basic_assets/Three%20Colorful%20Order%20Boxes%20with%20Checklists%20(1).png',
+  revenue:
+    'https://chairvala.b-cdn.net/basic_assets/Glossy%20Blue%20Package%20and%20Checklist%20(1).png',
+  products:
+    'https://chairvala.b-cdn.net/basic_assets/Verified%20Package%20Shipping%20Icon%20(1).png',
+  customers:
+    'https://chairvala.b-cdn.net/basic_assets/Customer%20Avatar%20Group%20with%20Cart%20and%20Checklist%20(1).png',
+};
+
 export default function DashboardPage() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,18 +53,22 @@ export default function DashboardPage() {
         <StatsCard
           label="Total Orders"
           value={loading ? '…' : String(stats?.total_orders ?? 0)}
+          iconSrc={DASHBOARD_STAT_ICONS.orders}
         />
         <StatsCard
           label="Total Revenue"
           value={loading ? '…' : formatPrice(stats?.total_revenue ?? 0)}
+          iconSrc={DASHBOARD_STAT_ICONS.revenue}
         />
         <StatsCard
           label="Active Products"
           value={loading ? '…' : String(stats?.active_products ?? stats?.total_products ?? 0)}
+          iconSrc={DASHBOARD_STAT_ICONS.products}
         />
         <StatsCard
           label="Customers"
           value={loading ? '…' : String(stats?.total_customers ?? 0)}
+          iconSrc={DASHBOARD_STAT_ICONS.customers}
         />
       </div>
 
