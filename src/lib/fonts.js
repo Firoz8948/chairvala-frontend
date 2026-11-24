@@ -1,10 +1,12 @@
 import {
   Plus_Jakarta_Sans,
+  Lora,
   Poppins,
   Montserrat,
   Outfit,
   Playfair_Display,
   DM_Serif_Display,
+  Caveat,
 } from 'next/font/google';
 
 export const fontSans = Plus_Jakarta_Sans({
@@ -17,6 +19,13 @@ export const fontSans = Plus_Jakarta_Sans({
 // Heading font options. The active one is chosen by --font-family-heading in globals.css;
 // browsers only download a font that is actually used, so unused options cost nothing.
 // next/font needs literal option objects, so options can't be shared via spread.
+const lora = Lora({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-lora',
+  display: 'swap',
+});
+
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
@@ -54,6 +63,24 @@ const dmSerif = DM_Serif_Display({
   preload: false,
 });
 
-export const fontVariables = [fontSans, poppins, montserrat, outfit, playfair, dmSerif]
+/** Simple cursive accent for hero banners */
+export const fontCursive = Caveat({
+  subsets: ['latin'],
+  weight: ['500', '600'],
+  variable: '--font-cursive',
+  display: 'swap',
+  preload: false,
+});
+
+export const fontVariables = [
+  fontSans,
+  lora,
+  poppins,
+  montserrat,
+  outfit,
+  playfair,
+  dmSerif,
+  fontCursive,
+]
   .map((font) => font.variable)
   .join(' ');

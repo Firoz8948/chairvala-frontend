@@ -6,10 +6,7 @@ import {
   CategoryShowcase,
   ProductShowcase,
   WhyChooseUs,
-  ReviewsShowcase,
-  GoogleReviews,
   WhoWeAre,
-  CategoryMarquee,
 } from './components';
 
 export default function HomeScreen() {
@@ -21,10 +18,7 @@ export default function HomeScreen() {
         <CategoryShowcase />
         <ProductShowcase />
         <WhyChooseUs />
-        <ReviewsShowcase />
         <WhoWeAre />
-        <CategoryMarquee />
-        <GoogleReviews />
       </main>
       <Footer />
     </div>

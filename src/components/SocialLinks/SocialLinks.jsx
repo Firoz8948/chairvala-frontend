@@ -1,4 +1,4 @@
-import { CONTACT, INSTAGRAM_URL } from '@/lib/seo';
+import { BRAND, CONTACT, INSTAGRAM_URL } from '@/lib/seo';
 import styles from './socialLinks.module.css';
 
 const ICONS = {
@@ -26,44 +26,69 @@ const ICONS = {
       <circle cx="12" cy="9.9" r="2.6" />
     </svg>
   ),
+  phone: (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  ),
 };
 
-const LINKS = {
-  whatsapp: {
-    href: `https://wa.me/${CONTACT.whatsapp}`,
-    label: 'Chat with ChairDekho on WhatsApp',
-    title: `WhatsApp ${CONTACT.phone}`,
-    external: true,
-  },
-  instagram: {
-    href: INSTAGRAM_URL,
-    label: 'Follow ChairDekho on Instagram',
-    title: '@chairdekho on Instagram',
-    external: true,
-  },
-  email: {
-    href: `mailto:${CONTACT.email}`,
-    label: `Email ${CONTACT.email}`,
-    title: CONTACT.email,
-    external: false,
-  },
-  maps: {
-    href: CONTACT.mapsUrl,
-    label: 'Find ChairDekho on Google Maps',
-    title: 'Open in Google Maps',
-    external: true,
-  },
-};
+function buildLinks() {
+  const links = {
+    whatsapp: {
+      href: `https://wa.me/${CONTACT.whatsapp}`,
+      label: `Chat with ${BRAND} on WhatsApp`,
+      title: `WhatsApp ${CONTACT.phone}`,
+      external: true,
+    },
+    email: {
+      href: `mailto:${CONTACT.email}`,
+      label: `Email ${CONTACT.email}`,
+      title: CONTACT.email,
+      external: false,
+    },
+    maps: {
+      href: CONTACT.mapsUrl,
+      label: `Find ${BRAND} on Google Maps`,
+      title: 'Open in Google Maps',
+      external: true,
+    },
+    phone: {
+      href: `tel:${CONTACT.phone.replace(/\s+/g, '')}`,
+      label: `Call ${BRAND} at ${CONTACT.phone}`,
+      title: CONTACT.phone,
+      external: false,
+    },
+  };
+  if (INSTAGRAM_URL) {
+    links.instagram = {
+      href: INSTAGRAM_URL,
+      label: `Follow ${BRAND} on Instagram`,
+      title: `${BRAND} on Instagram`,
+      external: true,
+    };
+  }
+  return links;
+}
 
 export default function SocialLinks({
-  items = ['instagram', 'whatsapp', 'email'],
+  items = null,
   className = '',
 }) {
+  const LINKS = buildLinks();
+  const defaultItems = [
+    'whatsapp',
+    'email',
+    'phone',
+    ...(INSTAGRAM_URL ? ['instagram'] : []),
+  ];
+  const resolvedItems = items ?? defaultItems;
+
   return (
     <div className={`${styles.row} ${className}`.trim()}>
-      {items.map((key) => {
+      {resolvedItems.map((key) => {
         const link = LINKS[key];
-        if (!link) return null;
+        if (!link?.href) return null;
         return (
           <a
             key={key}

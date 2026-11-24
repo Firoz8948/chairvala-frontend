@@ -5,12 +5,21 @@ import Footer from '@/components/Footer/Footer';
 import PageHeroBanner from '@/components/PageHeroBanner/PageHeroBanner';
 import { Store, PackageCheck, BadgeCheck, Wallet } from 'lucide-react';
 import WhyChooseUs from '@/app/home/components/WhyChooseUs';
-import { pageMetadata } from '@/lib/seo';
+import BrandTagline from '@/components/BrandTagline/BrandTagline';
+import {
+  BRAND,
+  BRAND_DOMAIN,
+  BRAND_LOGO,
+  BRAND_LOGO_HEIGHT,
+  BRAND_LOGO_WIDTH,
+  LEGACY_BRAND,
+  POWERED_BY_TAGLINE,
+  pageMetadata,
+} from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'About Us | ChairDekho – Chair Shop in Vasai Virar',
-  description:
-    'ChairDekho is your local chair shop in Nalasopara, Vasai-Virar. All types of chairs – plastic, arm, dining, garden, office and kids – at affordable prices.',
+  title: `About Us | ${BRAND}`,
+  description: `${BRAND_DOMAIN} is the online store for plastic chairs, plastic products, steel furniture and steel items at affordable prices. ${POWERED_BY_TAGLINE}.`,
   path: '/about',
 });
 
@@ -18,17 +27,17 @@ const WHY_POINTS = [
   {
     icon: Store,
     title: 'See It Before You Buy',
-    desc: 'Visit our shop near Umadevi Mandir, Nalasopara West, and sit on every chair before you decide.',
+    desc: 'Visit our retail store and choose plastic or steel products in person when you prefer to buy offline.',
   },
   {
     icon: PackageCheck,
     title: 'Retail & Wholesale',
-    desc: 'One chair for your home or hundreds for a banquet hall – bulk orders get wholesale rates.',
+    desc: 'One piece for your home or large bulk orders for shops and events — wholesale rates available.',
   },
   {
     icon: BadgeCheck,
-    title: 'Trusted Brands',
-    desc: 'Durable chairs from names like Prime, checked by our team before every dispatch.',
+    title: 'Trusted Quality',
+    desc: 'Plastic and steel products from reliable manufacturers, checked by our team before dispatch.',
   },
   {
     icon: Wallet,
@@ -48,57 +57,62 @@ export default function AboutPage() {
     <div className={styles.container}>
       <Header />
       <PageHeroBanner
-        title="About ChairDekho"
-        subtitle="All types of chairs, at affordable prices, in Vasai Virar."
+        title={`About ${BRAND_DOMAIN}`}
+        subtitle={`${POWERED_BY_TAGLINE} — plastic chairs, plastic products & steel items at affordable prices.`}
       />
 
       <main className={styles.main}>
-        {/* ── Our Story ── */}
         <section className={styles.storySection}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>OUR STORY</h2>
-            <p className={styles.sectionSubtitle}>A Chair for Every Space</p>
+            <p className={styles.sectionSubtitle}>Plastic & Steel for Every Need</p>
           </div>
 
           <div className={styles.storyContent}>
             <div className={styles.storyMedia}>
               <Image
-                src="/images/brand/chakladekho.webp"
-                alt="ChairDekho logo"
-                width={1200}
-                height={542}
-                sizes="(max-width: 900px) 100vw, 520px"
+                src={BRAND_LOGO}
+                alt={`${BRAND} logo`}
+                width={BRAND_LOGO_WIDTH}
+                height={BRAND_LOGO_HEIGHT}
+                sizes="(max-width: 900px) 100vw, 720px"
                 className={styles.storyImage}
+                unoptimized
               />
+              <BrandTagline className={styles.storyTagline} />
+              <div className={styles.legacyBrandBlock}>
+                <p className={styles.legacyBrandLabel}>{POWERED_BY_TAGLINE}</p>
+                <p className={styles.legacyBrandName}>{LEGACY_BRAND}</p>
+              </div>
             </div>
             <div className={styles.storyText}>
               <p className={styles.paragraph}>
-                ChairDekho started with a simple idea: buying a good chair should be easy and
-                affordable. From plastic chairs and arm chairs to dining, garden, office and kids
-                chairs, we bring all types of chairs together in one place.
+                {BRAND_DOMAIN} is the online home for quality plastic and steel products at honest
+                prices.
+                From plastic chairs and stools to household plastic items, steel racks and steel
+                furniture — we keep everyday essentials under one roof.
               </p>
               <p className={styles.paragraph}>
-                Proudly based in Nalasopara West, Vasai-Virar, we supply chairs to homes, shops,
-                offices, restaurants and events across Vasai, Virar and Nalasopara.
+                Our catalog and fulfilment are backed by <strong>{LEGACY_BRAND}</strong>, a trusted
+                retail and wholesale name serving homes, shops, offices, restaurants and events
+                with the same quality you expect in store.
               </p>
             </div>
           </div>
         </section>
 
-        {/* ── Our Values ── */}
         <div className={styles.valuesWrap}>
           <WhyChooseUs title="OUR VALUES" subtitle="What We Stand For" />
         </div>
 
-        {/* ── Why ChairDekho ── */}
         <section className={styles.whySection}>
           <div className={styles.whyCard}>
             <div className={styles.whyIntro}>
-              <h2 className={styles.whyTitle}>WHY CHAIRDEKHO</h2>
-              <p className={styles.whySubtitle}>Your neighbourhood chair wholesaler</p>
+              <h2 className={styles.whyTitle}>WHY {BRAND.toUpperCase()}</h2>
+              <p className={styles.whySubtitle}>Your plastic & steel supplier, online and offline</p>
               <p className={styles.whyLead}>
-                From a single chair for your balcony to hundreds for a wedding hall, we make buying
-                chairs in Vasai-Virar simple, honest and quick.
+                From a few plastic chairs to steel racks for a shop or warehouse, we make buying
+                simple, honest and quick — with delivery across India.
               </p>
               <ul className={styles.whyStats}>
                 {WHY_STATS.map((stat) => (
@@ -114,7 +128,7 @@ export default function AboutPage() {
               {WHY_POINTS.map(({ icon: Icon, title, desc }) => (
                 <li key={title} className={styles.whyItem}>
                   <span className={styles.whyIcon}>
-                    <Icon size={22} strokeWidth={1.6} aria-hidden="true" />
+                    <Icon size={24} strokeWidth={1} absoluteStrokeWidth aria-hidden="true" />
                   </span>
                   <h3 className={styles.whyItemTitle}>{title}</h3>
                   <p className={styles.whyItemDesc}>{desc}</p>

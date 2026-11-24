@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ImagePlus, Monitor, Smartphone, Plus, Trash2, X, RefreshCw, ExternalLink, ArrowUp, ArrowDown } from 'lucide-react';
 import adminService from '@/lib/services/admin';
-import { BANNER_SIZES, resolveBannerUrl } from '@/lib/banners';
+import { BANNER_SIZES, isProtectedDefaultBanner, resolveBannerUrl } from '@/lib/banners';
 import styles from '../products/products.module.css';
 import bannerStyles from './banners.module.css';
 
@@ -198,9 +198,11 @@ export default function BannersPage() {
         <div>
           <h1 className={styles.title}>Home Banners</h1>
           <p className={styles.subtitle}>
-            Slides shown at the top of the home page. Desktop: {BANNER_SIZES.desktop.width} ×{' '}
-            {BANNER_SIZES.desktop.height} px · Mobile: {BANNER_SIZES.mobile.width} ×{' '}
-            {BANNER_SIZES.mobile.height} px.
+            Slides shown at the top of the home page. Bundled heroes (
+            <code>chairvala-first-banner.png</code> desktop, <code>chairvala-mobile-banner.png</code>{' '}
+            mobile) cannot be deleted or re-imaged — hide them, reorder them, or add more slides.
+            Recommended size: desktop {BANNER_SIZES.desktop.width} × {BANNER_SIZES.desktop.height}{' '}
+            px · mobile {BANNER_SIZES.mobile.width} × {BANNER_SIZES.mobile.height} px.
           </p>
         </div>
       </div>
@@ -270,7 +272,7 @@ export default function BannersPage() {
                 className={styles.formInput}
                 value={form.title}
                 onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-                placeholder="Plastic chairs sale – up to 30% off"
+                placeholder="Plastic chairs & steel racks sale – up to 30% off"
               />
               <span className={styles.formHint}>Not shown on the banner; used for SEO and screen readers.</span>
             </div>
@@ -341,6 +343,9 @@ export default function BannersPage() {
                       <span className={bannerStyles.noImage}>No image</span>
                     )}
                     <span className={bannerStyles.positionBadge}>#{i + 1}</span>
+                    {isProtectedDefaultBanner(banner) ? (
+                      <span className={bannerStyles.bundledBadge}>Default hero</span>
+                    ) : null}
                   </div>
 
                   <div className={bannerStyles.cardBody}>
@@ -395,29 +400,51 @@ export default function BannersPage() {
                         >
                           <ArrowDown size={14} />
                         </button>
-                        <label className={styles.actionBtn} title="Replace image" aria-label="Replace image">
-                          <RefreshCw size={14} />
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/avif"
-                            hidden
+                        {isProtectedDefaultBanner(banner) ? (
+                          <span
+                            className={bannerStyles.protectedHint}
+                            title="Default hero image cannot be replaced"
+                          >
+                            Locked image
+                          </span>
+                        ) : (
+                          <label
+                            className={styles.actionBtn}
+                            title="Replace image"
+                            aria-label="Replace image"
+                          >
+                            <RefreshCw size={14} />
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp,image/avif"
+                              hidden
+                              disabled={busy}
+                              onChange={(e) => {
+                                replaceImage(banner, e.target.files?.[0]);
+                                e.target.value = '';
+                              }}
+                            />
+                          </label>
+                        )}
+                        {isProtectedDefaultBanner(banner) ? (
+                          <span
+                            className={bannerStyles.protectedHint}
+                            title="Default hero cannot be deleted"
+                          >
+                            Protected
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
+                            onClick={() => setDeleteTarget(banner)}
                             disabled={busy}
-                            onChange={(e) => {
-                              replaceImage(banner, e.target.files?.[0]);
-                              e.target.value = '';
-                            }}
-                          />
-                        </label>
-                        <button
-                          type="button"
-                          className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
-                          onClick={() => setDeleteTarget(banner)}
-                          disabled={busy}
-                          aria-label="Delete banner"
-                          title="Delete"
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                            aria-label="Delete banner"
+                            title="Delete"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

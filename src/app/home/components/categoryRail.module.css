@@ -43,6 +43,8 @@
 }
 
 .circle {
+  --circle-border-blue: var(--brand-blue, #0000a5);
+  --circle-border-maroon: var(--brand-maroon, #a50000);
   position: relative;
   width: var(--circle);
   height: var(--circle);
@@ -51,8 +53,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--circle-bg, #f5efe9);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  box-shadow: none;
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    conic-gradient(
+      from -90deg,
+      var(--circle-border-blue) 0deg 180deg,
+      var(--circle-border-maroon) 180deg 360deg
+    )
+    border-box;
   transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
@@ -158,8 +169,15 @@
 
 /* ================= SKELETON ================= */
 .skeleton {
-  background: linear-gradient(90deg, #f1ece7 25%, #e7ddd4 50%, #f1ece7 75%);
-  background-size: 200% 100%;
+  background:
+    linear-gradient(90deg, #ffffff 25%, #f4f4f8 50%, #ffffff 75%) padding-box,
+    conic-gradient(
+      from -90deg,
+      var(--brand-blue, #0000a5) 0deg 180deg,
+      var(--brand-maroon, #a50000) 180deg 360deg
+    )
+    border-box;
+  background-size: 200% 100%, auto;
   animation: railShimmer 1.6s infinite;
   box-shadow: none;
 }

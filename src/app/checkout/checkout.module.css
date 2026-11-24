@@ -73,11 +73,109 @@
   margin: 0 0 12px;
 }
 
+.stepper {
+  max-width: var(--container-md, 720px);
+  margin: 0 auto clamp(24px, 4vw, 36px);
+}
+
+.stepperList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.stepperItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  padding: 10px 6px;
+  border: 1px solid var(--border);
+  background: #fafafa;
+  opacity: 0.65;
+}
+
+.stepperItemActive {
+  opacity: 1;
+  border-color: #000000;
+  background: #ffffff;
+  box-shadow: 0 4px 14px -8px rgba(0, 0, 0, 0.25);
+}
+
+.stepperItemDone {
+  opacity: 1;
+  background: #ffffff;
+  border-color: #86efac;
+}
+
+.optionalMark {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.stepperIndex {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #000000;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.stepperItemActive .stepperIndex,
+.stepperItemDone .stepperIndex {
+  background: #000000;
+  color: #ffffff;
+}
+
+.stepperItemDone .stepperIndex {
+  border-color: #86efac;
+  background: #ecfdf5;
+  color: #166534;
+}
+
+.stepperLabel {
+  font-size: clamp(0.58rem, 2.2vw, 0.72rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-main);
+  line-height: 1.25;
+}
+
+.stepperLabelMob {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stepperLabelDesk {
+  display: block;
+}
+
+.stepperLabelLine {
+  display: block;
+  line-height: 1.15;
+}
+
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
   gap: clamp(24px, 3vw, 40px);
   align-items: start;
+}
+
+.layoutSteps {
+  grid-template-columns: 1fr;
+  max-width: min(100%, 520px);
+  margin: 0 auto;
 }
 
 .formsColumn {
@@ -96,9 +194,50 @@
   font-size: 1rem;
   font-weight: 700;
   margin: 0 0 18px;
-  color: var(--text-main);
+  color: var(--brand-blue);
   letter-spacing: 0.02em;
   text-transform: uppercase;
+}
+
+.cardHint {
+  margin: -8px 0 16px;
+  font-size: var(--text-body);
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.pinSummary {
+  margin: 4px 0 0;
+  padding: 12px 14px;
+  background: var(--section-alt-bg, #f4f6fa);
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.stepActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.stepBack {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.stepBack:hover {
+  color: var(--text-main);
 }
 
 .formGrid {
@@ -164,6 +303,20 @@
 
 .phoneInput {
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.stepFourPay {
+  margin-top: 6px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+}
+
+.stepFourPay .cardTitle {
+  margin: 0 0 14px;
+}
+
+.stepFour .summaryItems {
+  max-height: none;
 }
 
 .payOptions {
@@ -258,6 +411,7 @@
   font-size: 1rem;
   font-weight: 700;
   margin: 0 0 18px;
+  color: var(--brand-blue);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -478,5 +632,34 @@
 
   .fullWidth {
     grid-column: auto;
+  }
+
+  .stepperList {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .stepperItem {
+    padding: 8px 3px;
+    gap: 5px;
+  }
+
+  .stepperIndex {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+
+  .stepperLabel {
+    font-size: clamp(0.5rem, 2.4vw, 0.62rem);
+    letter-spacing: 0.02em;
+  }
+
+  .stepperLabelDesk {
+    display: none;
+  }
+
+  .stepperLabelMob {
+    display: flex;
   }
 }

@@ -1,56 +1,75 @@
 import { ASSETS } from '@/lib/assets';
 
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://chairdekho.in').replace(
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://chairvala.com').replace(
   /\/+$/,
   ''
 );
-export const BRAND = 'ChairDekho';
-export const INSTAGRAM_URL = 'https://www.instagram.com/chairdekho/';
-export const SOCIAL_LINKS = [INSTAGRAM_URL];
+
+export const SITE_DOMAIN = (() => {
+  try {
+    return new URL(SITE_URL).hostname;
+  } catch {
+    return 'localhost';
+  }
+})();
+
+export const BRAND = 'Chairvala';
+/** Public site name including domain suffix where needed. */
+export const BRAND_DOMAIN = 'Chairvala.com';
+/** Physical retail brand — Chairvala.com is powered by this store. */
+export const LEGACY_BRAND = 'Shree Ram Steel';
+
+/** From logo wordmark (CHAIR / VALA). */
+export const BRAND_BLUE = '#0000A5';
+export const BRAND_MAROON = '#A50000';
+export const POWERED_BY_TAGLINE = `Powered by ${LEGACY_BRAND}`;
+export const BRAND_LOGO = '/images/brand/chairvala.png';
+export const BRAND_LOGO_WIDTH = 2172;
+export const BRAND_LOGO_HEIGHT = 724;
+/** width ÷ height — keep CSS sizing in sync with the PNG file */
+export const BRAND_LOGO_ASPECT = BRAND_LOGO_WIDTH / BRAND_LOGO_HEIGHT;
+
+export const INSTAGRAM_URL = '';
+export const SOCIAL_LINKS = INSTAGRAM_URL ? [INSTAGRAM_URL] : [];
 export const CONTACT = {
-  phone: '+91 96991 64131',
-  phoneIntl: '+91-96991-64131',
-  whatsapp: '919699164131',
-  email: 'brjangu29@gmail.com',
+  phone: '+91 90040 00201',
+  phoneIntl: '+91-90040-00201',
+  whatsapp: '919004000201',
+  email: 'Sksteel2929@gmail.com',
   street: 'Umadevi Mandir, Umrale, Samel Pada',
-  locality: 'Nalasopara West, Vasai-Virar',
-  region: 'Maharashtra',
   postalCode: '401203',
-  address: 'Umadevi Mandir, Umrale, Samel Pada, Nalasopara West, Vasai-Virar, Maharashtra 401203',
+  address: 'Umadevi Mandir, Umrale, Samel Pada, 401203, India',
   mapsUrl: 'https://maps.app.goo.gl/U9bcHmccejspLza47',
   gstin: '27AQEPR1415Q1ZF',
 };
-export const SERVICE_AREAS = ['Vasai', 'Virar', 'Nalasopara', 'Naigaon', 'Bhayandar', 'Mira Road'];
-export const HOME_TITLE = 'All Types of Chairs at Affordable Prices in Vasai Virar | ChairDekho';
+export const HOME_TITLE =
+  'Plastic Chairs, Plastic Products & Steel Items at Best Price | Chairvala.com';
 export const HOME_DESCRIPTION =
-  'All types of chairs available – plastic, arm, armless, dining, garden, office & kids chairs. Buy now at affordable prices in Vasai, Virar & Nalasopara.';
+  'Chairvala.com — shop plastic chairs, plastic stools, tables, household plastic items, steel furniture, racks and steel products at affordable prices. Powered by Shree Ram Steel. Pan-India delivery. Bulk orders welcome.';
 export const SITE_KEYWORDS = [
-  'chairs in Vasai',
-  'chairs in Virar',
-  'chair shop in Vasai Virar',
-  'chair shop in Nalasopara',
-  'buy chairs online',
-  'affordable chairs',
-  'chairs at best price',
-  'plastic chairs',
+  'Chairvala',
+  'Chairvala.com',
   'plastic chair price',
-  'arm chairs',
-  'armless chairs',
-  'dining chairs',
-  'garden chairs',
-  'office chairs',
-  'kids chairs',
+  'buy plastic chairs online',
   'plastic stools',
-  'chairs near me',
-  'ChairDekho',
+  'plastic tables',
+  'plastic household items',
+  'steel furniture',
+  'steel racks',
+  'steel almirah',
+  'steel products',
+  'wholesale plastic chairs',
+  'bulk plastic chairs',
+  'affordable plastic and steel',
+  'plastic and steel shop online',
 ];
 
 export const DEFAULT_OG_IMAGE = {
   url: ASSETS.ogImage,
-  width: 1734,
-  height: 907,
-  type: 'image/webp',
-  alt: BRAND,
+  width: BRAND_LOGO_WIDTH,
+  height: BRAND_LOGO_HEIGHT,
+  type: 'image/png',
+  alt: `${BRAND_DOMAIN} – plastic chairs, plastic products & steel items online`,
 };
 
 const TITLE_MAX = 65;
@@ -103,23 +122,61 @@ export const truncate = (text, max) => {
   return `${atWord.replace(/[\s,.;:–—-]+$/, '')}…`;
 };
 
-/** Drops the "| CHAIRDEKHO" style suffix admins add to product names. */
+const LEGACY_BRAND_SUFFIX =
+  /\s*[|–—-]\s*(shree\s*ram\s*steel|chairvala(\.com)?)\s*$/i;
+
+/** Drops legacy "| BRAND" suffixes admins add to product names. */
 export const cleanProductName = (name) =>
   String(name || '')
-    .replace(/\s*[|–—-]\s*chair\s*dekho(\.com)?\s*$/i, '')
+    .replace(LEGACY_BRAND_SUFFIX, '')
     .replace(/\s+/g, ' ')
     .trim();
 
 const PRODUCT_TYPES = [
-  { key: 'office chair', label: 'office chair', plural: 'office chairs', re: /office|revolving|executive|ergonomic|computer|study/i },
-  { key: 'kids chair', label: 'kids chair', plural: 'kids chairs', re: /\bkids?\b|child|baby/i },
-  { key: 'garden chair', label: 'garden chair', plural: 'garden chairs', re: /garden|outdoor|patio|lawn|balcony/i },
-  { key: 'dining chair', label: 'dining chair', plural: 'dining chairs', re: /dining|cafe|restaurant/i },
-  { key: 'armless chair', label: 'armless chair', plural: 'armless chairs', re: /armless|without\s+arms?/i },
-  { key: 'arm chair', label: 'arm chair', plural: 'arm chairs', re: /arm\s*chair|with\s+arms?/i },
+  {
+    key: 'steel rack',
+    label: 'steel rack',
+    plural: 'steel racks',
+    re: /steel\s*racks?|shelf|almirah|wardrobe|storage/i,
+  },
+  {
+    key: 'steel furniture',
+    label: 'steel furniture',
+    plural: 'steel furniture',
+    re: /steel|iron|metal\s*(table|chair|bed|sofa)?/i,
+  },
+  {
+    key: 'plastic household',
+    label: 'plastic item',
+    plural: 'plastic household items',
+    re: /bucket|mug|basket|container|basin|tiffin|drum|crate|tub/i,
+  },
+  {
+    key: 'office chair',
+    label: 'office chair',
+    plural: 'office chairs',
+    re: /office|revolving|executive|ergonomic|computer|study/i,
+  },
+  {
+    key: 'garden chair',
+    label: 'garden chair',
+    plural: 'garden chairs',
+    re: /garden|outdoor|patio|lawn|balcony/i,
+  },
+  {
+    key: 'dining chair',
+    label: 'dining chair',
+    plural: 'dining chairs',
+    re: /dining|cafe|restaurant/i,
+  },
   { key: 'stool', label: 'stool', plural: 'stools', re: /\bstools?\b/i },
   { key: 'table', label: 'table', plural: 'tables', re: /\btables?\b/i },
-  { key: 'plastic chair', label: 'plastic chair', plural: 'plastic chairs', re: /plastic|moulded|molded|monobloc/i },
+  {
+    key: 'plastic chair',
+    label: 'plastic chair',
+    plural: 'plastic chairs',
+    re: /plastic|moulded|molded|monobloc/i,
+  },
   { key: 'chair', label: 'chair', plural: 'chairs', re: /\bchairs?\b/i },
 ];
 
@@ -140,7 +197,7 @@ const metaValue = (product, key) => stripHtml(product?.metafields?.[key] || '');
 export function getHighlights(product, defs = []) {
   const values = product?.metafields || {};
   const ordered = (Array.isArray(defs) ? defs : [])
-    .filter((d) => d?.is_active !== false)
+    .filter((d) => d.is_active !== false)
     .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
     .map((d) => ({ key: d.key, name: d.name, value: stripHtml(values[d.key]) }));
   const list = ordered.length
@@ -157,9 +214,8 @@ export function buildProductTitle(product) {
   const override = String(product?.seo_title || '').trim();
   if (override) return override;
 
-  const name = cleanProductName(product?.name) || 'Chair';
+  const name = cleanProductName(product?.name) || 'Product';
   const candidates = [
-    `${name} – Best Price in Vasai Virar | ${BRAND}`,
     `${name} – Best Price | ${BRAND}`,
     `${name} | ${BRAND}`,
     name,
@@ -202,10 +258,10 @@ export function buildProductDescription(product, defs = []) {
   const override = String(product?.seo_description || '').trim();
   if (override) return truncate(override, DESCRIPTION_MAX);
 
-  const name = cleanProductName(product?.name) || 'this chair';
+  const name = cleanProductName(product?.name) || 'this product';
   const { low } = getPriceRange(product);
   const price = formatInr(low);
-  const lead = `Buy ${name} online${price ? ` at ${price}` : ''} from ${BRAND} – affordable chairs delivered in Vasai Virar.`;
+  const lead = `Buy ${name} online${price ? ` at ${price}` : ''} from ${BRAND} – quality plastic & steel products with pan-India delivery.`;
 
   const highlightKeys = ['color', 'material', 'design', 'finish', 'size', 'weight'];
   const highlightValues = highlightKeys
@@ -235,16 +291,11 @@ export function buildProductKeywords(product) {
   const color = metaValue(product, 'color');
   const words = [name];
   if (type) {
-    words.push(
-      type.plural,
-      `${type.label} price`,
-      `buy ${type.label} online`,
-      `${type.plural} in Vasai Virar`
-    );
+    words.push(type.plural, `${type.label} price`, `buy ${type.label} online`);
     if (color) words.push(`${color.toLowerCase()} ${type.label}`);
   }
   if (product?.category) words.push(product.category);
-  words.push('chairs in Vasai Virar', 'affordable chairs', BRAND);
+  words.push('plastic and steel shop', BRAND);
   return [...new Set(words.filter(Boolean))];
 }
 
@@ -391,13 +442,13 @@ export function buildBreadcrumbJsonLd(items) {
 export function buildOrganizationJsonLd() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'FurnitureStore',
+    '@type': 'Store',
     '@id': `${SITE_URL}/#organization`,
     name: BRAND,
     description: HOME_DESCRIPTION,
     url: SITE_URL,
-    logo: absoluteUrl('/icon.png'),
-    image: ASSETS.ogImage,
+    logo: absoluteUrl(BRAND_LOGO),
+    image: absoluteUrl(BRAND_LOGO),
     ...(SOCIAL_LINKS.length ? { sameAs: SOCIAL_LINKS } : {}),
     email: CONTACT.email,
     telephone: CONTACT.phoneIntl,
@@ -405,13 +456,11 @@ export function buildOrganizationJsonLd() {
     address: {
       '@type': 'PostalAddress',
       streetAddress: CONTACT.street,
-      addressLocality: CONTACT.locality,
-      addressRegion: CONTACT.region,
       postalCode: CONTACT.postalCode,
       addressCountry: 'IN',
     },
     taxID: CONTACT.gstin,
-    areaServed: SERVICE_AREAS.map((name) => ({ '@type': 'City', name })),
+    areaServed: { '@type': 'Country', name: 'IN' },
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
@@ -439,7 +488,7 @@ export function buildCategorySeo(category) {
   const name = String(category?.name || '').trim();
   const autoTitle =
     [
-      `${name} – Buy at Best Price in Vasai Virar | ${BRAND}`,
+      `${name} – Buy at Best Price | ${BRAND}`,
       `${name} at Affordable Prices | ${BRAND}`,
       `${name} | ${BRAND}`,
     ].find((c) => c.length <= TITLE_MAX) || name;
@@ -448,7 +497,7 @@ export function buildCategorySeo(category) {
   const intro = stripHtml(category?.description);
   const parts = [
     intro ? (/[.!?]$/.test(intro) ? intro : `${intro}.`) : '',
-    `Shop ${name.toLowerCase()} at affordable prices from ${BRAND}, delivered across Vasai, Virar & Nalasopara.`,
+    `Shop ${name.toLowerCase()} at affordable prices from ${BRAND} with delivery across India.`,
     'Secure checkout & cash on delivery.',
   ];
   let autoDescription = '';

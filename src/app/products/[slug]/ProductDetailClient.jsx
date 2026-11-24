@@ -5,11 +5,20 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
-import CategoryMarquee from '@/app/home/components/CategoryMarquee';
 import productService from '@/lib/services/products';
 import { useCart } from '@/context/CartContext';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Minus, Plus, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  ArrowLeft,
+  Minus,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+  Truck,
+  ShieldCheck,
+  Store,
+  Package,
+} from 'lucide-react';
 import ColorSwatches, {
   buildColorSwatchItems,
   colorVariantOptions,
@@ -19,7 +28,7 @@ import ColorSwatches, {
   productColorHref,
 } from '@/components/ColorSwatches/ColorSwatches';
 import ProductCard from '@/components/ProductCard/ProductCard';
-import { ASSETS } from '@/lib/assets';
+import CTAButton from '@/components/CTAButton';
 import styles from './pdp.module.css';
 import cardStyles from '@/app/home/home.module.css';
 
@@ -29,6 +38,13 @@ const resolveImageUrl = (url) => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
 };
+
+const PDP_TRUST_ITEMS = [
+  { id: 'fast-delivery', lines: ['Fast', 'Delivery'], Icon: Truck },
+  { id: 'secure-payment', lines: ['Secure', 'Payment'], Icon: ShieldCheck },
+  { id: 'offline-selling', lines: ['Offline', 'Selling'], Icon: Store },
+  { id: 'bulk-order', lines: ['Bulk', 'Orders'], Icon: Package },
+];
 
 const formatPrice = (value) => {
   const num = Number(value);
@@ -43,25 +59,6 @@ const stripHtml = (raw) =>
     .replace(/&amp;/gi, '&')
     .replace(/\s+/g, ' ')
     .trim();
-
-const DEFAULT_FAQS = [
-  {
-    q: 'What is the quality of ChairDekho chairs?',
-    a: 'Every chair is made with carefully selected materials and finished for everyday durability. We check strength, stability and surface finish before anything ships.',
-  },
-  {
-    q: 'How should I care for this product?',
-    a: 'Wipe with a damp cloth and mild soap. Avoid sharp objects and long exposure to strong heat. For office chairs, check the screws and wheels from time to time.',
-  },
-  {
-    q: 'How long does delivery take?',
-    a: 'Orders are dispatched within 1–2 business days. Delivery across India then takes 3–8 business days depending on your location (up to 10 business days for North-East India and remote areas). Shipping is free on prepaid orders.',
-  },
-  {
-    q: 'Can I return or exchange this?',
-    a: 'Yes — unused products in original condition can be returned as per our Returns & Refunds policy. Start a return from your order confirmation or contact support.',
-  },
-];
 
 const buildInitialSelection = (productData, colorValue) => {
   const initial = {};
@@ -148,7 +145,6 @@ function ProductDetailPageInner({ initialProduct, initialDefs, initialColor }) {
     buildInitialSelection(initialProduct, initialColor)
   );
   const [qty, setQty] = useState(1);
-  const [openFaq, setOpenFaq] = useState(0);
   const [highlightsOpen, setHighlightsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const touchStartX = useRef(null);
@@ -194,7 +190,6 @@ function ProductDetailPageInner({ initialProduct, initialDefs, initialColor }) {
           setSelectedOptions(buildInitialSelection(productData, param));
           setActiveImage(0);
           setQty(1);
-          setOpenFaq(0);
         }
 
         try {
@@ -372,32 +367,6 @@ function ProductDetailPageInner({ initialProduct, initialDefs, initialColor }) {
     [metafieldSections]
   );
 
-  const faqItems = useMemo(() => {
-    const faqSection = metafieldSections.find(
-      (s) => /faq/i.test(s.key) || /faq/i.test(s.title || '')
-    );
-    if (faqSection?.value) {
-      const text = String(faqSection.value)
-        .replace(/<[^>]+>/g, '\n')
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean);
-      const parsed = [];
-      for (let i = 0; i < text.length; i += 1) {
-        const line = text[i];
-        if (line.endsWith('?') || /^q[:.\s]/i.test(line)) {
-          parsed.push({
-            q: line.replace(/^q[:.\s]+/i, ''),
-            a: text[i + 1] || '',
-          });
-          i += 1;
-        }
-      }
-      if (parsed.length) return parsed;
-    }
-    return DEFAULT_FAQS;
-  }, [metafieldSections]);
-
   const selectOption = (variantKey, option) => {
     setSelectedOptions((prev) => ({ ...prev, [variantKey]: option }));
     setQty(1);
@@ -495,9 +464,7 @@ function ProductDetailPageInner({ initialProduct, initialDefs, initialColor }) {
             <div className={styles.errorState}>
               <h1>Product not found</h1>
               <p>{error || 'This product may be unavailable.'}</p>
-              <Link href="/" className={styles.primaryBtn}>
-                Go home
-              </Link>
+              <CTAButton href="/">Go home</CTAButton>
             </div>
           ) : (
             <>
@@ -592,7 +559,9 @@ function ProductDetailPageInner({ initialProduct, initialDefs, initialColor }) {
                   {product.category && (
                     <p className={styles.categoryLabel}>{product.category}</p>
                   )}
-                  <h1 className={styles.title}>{product.name}</h1>
+                  <h1 className={styles.title} data-brand-split="off">
+                    {product.name}
+                  </h1>
 
                   <div className={styles.priceRow}>
                     <div className={styles.priceGroup}>
@@ -746,26 +715,26 @@ function ProductDetailPageInner({ initialProduct, initialDefs, initialColor }) {
                   </div>
 
                   <div className={styles.actions}>
-                    <button
-                      type="button"
-                      className={styles.addToBagBtn}
-                      onClick={handleAddToBag}
+                    <CTAButton
+                      block
                       disabled={!inStock}
+                      onClick={handleAddToBag}
+                      className={styles.addToBagCta}
                     >
-                      {inStock ? 'Add to Cart' : 'Out of Stock'}
-                    </button>
+                      {inStock ? 'Add to cart' : 'Out of stock'}
+                    </CTAButton>
                   </div>
 
                   <div className={styles.trustIcons}>
-                    {[
-                      { src: ASSETS.qualityChecked, label: 'Quality Checked' },
-                      { src: ASSETS.multipleDesigns, label: 'Multiple Designs' },
-                      { src: ASSETS.wholesalePrice, label: 'Wholesale Price' },
-                      { src: ASSETS.googleRating, label: '5 Star Google Rating' },
-                    ].map((item) => (
-                      <div key={item.src} className={styles.trustIconItem}>
-                        <img src={item.src} alt="" className={styles.trustIconImg} />
-                        <span className={styles.trustIconLabel}>{item.label}</span>
+                    {PDP_TRUST_ITEMS.map(({ id, lines, Icon }) => (
+                      <div key={id} className={styles.trustIconItem}>
+                        <span className={styles.trustIconGlyph} aria-hidden="true">
+                          <Icon strokeWidth={1} absoluteStrokeWidth />
+                        </span>
+                        <span className={styles.trustIconLabel}>
+                          <span>{lines[0]}</span>
+                          <span>{lines[1]}</span>
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -799,35 +768,6 @@ function ProductDetailPageInner({ initialProduct, initialDefs, initialColor }) {
                 </section>
               </div>
 
-              <section className={styles.contentSection}>
-                <div className={styles.sectionHeader}>
-                  <h2 className={styles.sectionTitle}>FAQS</h2>
-                  <p className={styles.sectionSubtitle}>Common questions</p>
-                </div>
-                <div className={styles.faqList}>
-                  {faqItems.map((item, idx) => {
-                    const isOpen = openFaq === idx;
-                    return (
-                      <div key={`${item.q}-${idx}`} className={styles.faqItem}>
-                        <button
-                          type="button"
-                          className={styles.faqQuestion}
-                          onClick={() => setOpenFaq(isOpen ? -1 : idx)}
-                          aria-expanded={isOpen}
-                        >
-                          <span>{item.q}</span>
-                          <ChevronDown
-                            size={18}
-                            className={`${styles.faqChevron} ${isOpen ? styles.faqChevronOpen : ''}`}
-                          />
-                        </button>
-                        {isOpen && <div className={styles.faqAnswer}>{item.a}</div>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </section>
-
               {relatedProducts.length > 0 && (
                 <section className={styles.contentSection}>
                   <div className={styles.sectionHeader}>
@@ -851,7 +791,6 @@ function ProductDetailPageInner({ initialProduct, initialDefs, initialColor }) {
           )}
         </div>
       </main>
-      <CategoryMarquee />
       <Footer />
     </div>
   );

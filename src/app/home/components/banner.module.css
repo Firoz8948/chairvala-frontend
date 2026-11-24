@@ -1,7 +1,8 @@
 .banner {
   width: 100%;
-  max-width: 2048px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
 
 .srOnly {
@@ -25,19 +26,15 @@
 }
 
 @media (min-width: 768px) {
-  .banner {
-    padding: clamp(16px, 2vw, 28px) clamp(12px, 1.25vw, 24px);
-  }
-
   .desktopOnly > .slider,
   .desktopOnly > .placeholder {
-    border: 1px solid var(--border);
-    border-radius: clamp(12px, 1.2vw, 20px);
+    border: none;
+    border-radius: 0;
     overflow: hidden;
   }
 
   .desktopOnly .placeholderInner {
-    border-radius: clamp(8px, 0.8vw, 14px);
+    border-radius: 0;
   }
 }
 
@@ -63,8 +60,128 @@
 }
 
 .slide {
+  position: relative;
   flex: 0 0 100%;
   height: 100%;
+}
+
+/* Default desktop hero — left 50% copy panel, content centred */
+.heroCopy {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  align-items: stretch;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+
+.heroCopyPanel {
+  width: 50%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    90deg,
+    rgba(12, 8, 6, 0.78) 0%,
+    rgba(12, 8, 6, 0.45) 72%,
+    rgba(12, 8, 6, 0) 100%
+  );
+  pointer-events: auto;
+}
+
+.heroCopyInner {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: min(560px, 90%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: clamp(20px, 3vw, 36px) clamp(20px, 3vw, 40px);
+  color: #ffffff;
+}
+
+.heroHeadline {
+  margin: 0 0 16px;
+  font-family: var(--font-family-heading);
+  font-size: clamp(1.65rem, 3.2vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+}
+
+.heroSubtitle {
+  margin: 0 0 20px;
+  max-width: 100%;
+  text-align: center;
+  font-size: clamp(0.95rem, 1.8vw, 1.125rem);
+  line-height: 1.5;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+@media (min-width: 1024px) {
+  .heroCopyDesktop .heroHeadline {
+    font-size: 56px;
+  }
+
+  .heroCopyDesktop .heroSubtitle {
+    font-size: 19px;
+  }
+}
+
+.heroByline {
+  margin: 10px 0 0;
+  font-family: var(--font-family-sans);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+
+@media (min-width: 768px) {
+  .heroCopyDesktop .heroByline {
+    font-size: 10px;
+  }
+}
+
+.heroCopyDesktop {
+  display: none;
+}
+
+.heroCopyMobile {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 24px) clamp(14px, 4vw, 20px) clamp(20px, 5vw, 28px);
+  background: none;
+}
+
+.heroCopyMobileInner {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  pointer-events: auto;
+  color: #ffffff;
+}
+
+@media (min-width: 768px) {
+  .heroCopyDesktop {
+    display: flex;
+  }
+
+  .heroCopyMobile {
+    display: none !important;
+  }
 }
 
 .slideLink {
@@ -82,13 +199,13 @@
 }
 
 .controls {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(10px, 1.6vw, 22px);
-  transform: translateX(-50%);
+  position: static;
+  transform: none;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
+  padding: clamp(10px, 1.5vw, 16px) 0 clamp(4px, 0.8vw, 8px);
 }
 
 .arrow {
@@ -124,8 +241,8 @@
   padding: 0;
   border: none;
   border-radius: 999px !important;
-  background: rgba(255, 255, 255, 0.6);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+  background: #cbd5e1;
+  box-shadow: none;
   cursor: pointer;
   transition: width 0.3s ease, background-color 0.3s ease;
 }
@@ -133,7 +250,7 @@
 .dotActive {
   width: 24px;
   background: #000000;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6);
+  box-shadow: none;
 }
 
 /* ================= PLACEHOLDER ================= */
@@ -197,20 +314,7 @@
   }
 
   .controls {
-    position: static;
-    transform: none;
-    justify-content: center;
-    padding: 10px 0 2px;
-  }
-
-  .dot {
-    background: #cbd5e1;
-    box-shadow: none;
-  }
-
-  .dotActive {
-    background: #000000;
-    box-shadow: none;
+    padding: 10px 0 4px;
   }
 
   .placeholder {

@@ -1,12 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import styles from './shopNowButton.module.css';
+import CTAButton from '@/components/CTAButton';
 
 export default function ShopNowButton({
   children,
-  text = 'Shop Now',
+  text = 'Shop now',
   href,
   onClick,
   as,
@@ -22,65 +21,52 @@ export default function ShopNowButton({
 }) {
   const content = children || text;
   const computedIconSize = iconSize || (size === 'sm' ? 14 : size === 'md' ? 16 : 18);
+  const ctaVariant = variant === 'onLight' ? 'light' : 'dark';
+  const compact = size === 'sm' || size === 'md';
 
-  const combinedClassName = [
-    styles.shopNowBtn,
-    styles[size] || '',
-    variant === 'onLight' ? styles.onLight : styles.onDark,
-    fullWidth ? styles.fullWidth : '',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  const innerContent = (
+  const inner = (
     <>
-      <span>{content}</span>
-      {showArrow && <ArrowRight size={computedIconSize} />}
+      {content}
+      {showArrow ? <ArrowRight size={computedIconSize} strokeWidth={2} aria-hidden="true" /> : null}
     </>
   );
 
+  const common = {
+    variant: ctaVariant,
+    block: fullWidth,
+    compact,
+    className,
+    disabled,
+    ...rest,
+  };
+
   if (as === 'span') {
     return (
-      <span className={combinedClassName} onClick={onClick} {...rest}>
-        {innerContent}
-      </span>
+      <CTAButton {...common} onClick={onClick} type="button">
+        {inner}
+      </CTAButton>
     );
   }
 
-  if (as === 'div') {
+  if (as === 'button' || (!href && (onClick || as === undefined))) {
     return (
-      <div className={combinedClassName} onClick={onClick} {...rest}>
-        {innerContent}
-      </div>
-    );
-  }
-
-  if (as === 'button' || (!href && onClick) || (!href && as === undefined)) {
-    return (
-      <button
-        type={type}
-        className={combinedClassName}
-        onClick={onClick}
-        disabled={disabled}
-        {...rest}
-      >
-        {innerContent}
-      </button>
+      <CTAButton {...common} onClick={onClick} type={type}>
+        {inner}
+      </CTAButton>
     );
   }
 
   if (href) {
     return (
-      <Link href={href} className={combinedClassName} onClick={onClick} {...rest}>
-        {innerContent}
-      </Link>
+      <CTAButton {...common} href={href} onClick={onClick}>
+        {inner}
+      </CTAButton>
     );
   }
 
   return (
-    <span className={combinedClassName} onClick={onClick} {...rest}>
-      {innerContent}
-    </span>
+    <CTAButton {...common} onClick={onClick} type="button">
+      {inner}
+    </CTAButton>
   );
 }

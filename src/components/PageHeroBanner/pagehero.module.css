@@ -35,14 +35,17 @@
 }
 
 .heroBg {
-  display: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #fff7ed 48%, #f1f5f9 100%);
+  pointer-events: none;
 }
 
 .heroInner {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: calc(100% - 2 * (var(--hero-h) + var(--hero-img-gap)));
+  max-width: 720px;
   padding: 0 clamp(12px, 2vw, 32px);
   display: flex;
   flex-direction: column;
@@ -128,23 +131,10 @@
   }
 }
 
-/* Mobile: blurred photo behind the text instead of the two chair cut-outs.
-   The chair images stay lazy so phones never download them while hidden. */
 @media (max-width: 768px) {
   .heroBanner {
     display: flex;
     padding: clamp(44px, 12vw, 64px) 0;
-  }
-
-  .heroBg {
-    display: block;
-    position: absolute;
-    inset: -12px;
-    background:
-      linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)),
-      url('/images/hero/chairhero-mobile.webp') center bottom / 100% auto no-repeat #ffffff;
-    filter: blur(4px);
-    pointer-events: none;
   }
 
   .heroImg {

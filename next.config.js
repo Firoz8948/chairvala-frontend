@@ -22,8 +22,8 @@ const nextConfig = {
     return [
       {
         source: '/:path*',
-        has: [{ type: 'host', value: 'www.chairdekho.in' }],
-        destination: 'https://chairdekho.in/:path*',
+        has: [{ type: 'host', value: 'www.chairvala.com' }],
+        destination: 'https://chairvala.com/:path*',
         permanent: true,
       },
       { source: '/home', destination: '/', permanent: true },

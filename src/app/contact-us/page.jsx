@@ -3,12 +3,11 @@ import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import PageHeroBanner from '@/components/PageHeroBanner/PageHeroBanner';
 import { Mail, Phone, Clock, MapPin } from 'lucide-react';
-import { CONTACT, pageMetadata } from '@/lib/seo';
+import { BRAND, CONTACT, pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Contact Us | ChairDekho – Chair Shop in Nalasopara, Vasai Virar',
-  description:
-    'Contact ChairDekho for chair orders, bulk enquiries, returns or product questions. Call, WhatsApp or visit us in Nalasopara West, Vasai-Virar.',
+  title: `Contact Us | ${BRAND}`,
+  description: `Contact ${BRAND} for plastic chairs, plastic products, steel items, bulk enquiries, returns or product questions. Call, WhatsApp or visit our store.`,
   path: '/contact-us',
 });
 
@@ -34,7 +33,7 @@ const contactInfo = [
   {
     icon: MapPin,
     label: 'Store Address',
-    value: 'ChairDekho by PrimeCraft',
+    value: BRAND,
     extra: `${CONTACT.address} · GST - ${CONTACT.gstin}`,
   },
 ];

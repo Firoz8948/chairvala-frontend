@@ -1,8 +1,8 @@
-import { BRAND, HOME_DESCRIPTION } from '@/lib/seo';
+import { BRAND, BRAND_DOMAIN, HOME_DESCRIPTION } from '@/lib/seo';
 
 export default function manifest() {
   return {
-    name: BRAND,
+    name: BRAND_DOMAIN,
     short_name: BRAND,
     description: HOME_DESCRIPTION,
     start_url: '/',
@@ -10,10 +10,12 @@ export default function manifest() {
     background_color: '#ffffff',
     theme_color: '#4a2c17',
     icons: [
-      { src: '/favicon.ico', sizes: '48x48', type: 'image/x-icon' },
-      { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-      { src: '/icon.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+      {
+        src: '/images/brand/chairvala.png',
+        sizes: '2172x724',
+        type: 'image/png',
+        purpose: 'any',
+      },
     ],
   };
 }

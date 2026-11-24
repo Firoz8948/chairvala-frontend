@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import ShopNowButton from '@/components/ShopNowButton';
+import CTAButton from '@/components/CTAButton';
 import { useCart } from '@/context/CartContext';
 import authService from '@/lib/services/auth';
 import paymentService from '@/lib/services/payments';
@@ -15,6 +16,7 @@ import shippingService from '@/lib/services/shipping';
 import orderService from '@/lib/services/orders';
 import promoService from '@/lib/services/promos';
 import apiClient from '@/lib/api';
+import { BRAND } from '@/lib/seo';
 import {
   INDIAN_STATES,
   formatPrice,
@@ -39,6 +41,13 @@ const emptyForm = {
 };
 
 const ADDRESS_KEYS = ['line1', 'line2', 'landmark', 'city', 'state', 'pincode'];
+
+const CHECKOUT_STEPS = [
+  { id: 1, title: 'Contact details', line1: 'Contact', line2: 'Details' },
+  { id: 2, title: 'Shipping pin code', line1: 'Shipping', line2: 'Pin code' },
+  { id: 3, title: 'Delivery address', line1: 'Delivery', line2: 'Address' },
+  { id: 4, title: 'Payment details', line1: 'Payment', line2: 'Details' },
+];
 
 const emptyAddress = Object.fromEntries(ADDRESS_KEYS.map((k) => [k, '']));
 
@@ -80,6 +89,7 @@ export default function CheckoutScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [paymentConfig, setPaymentConfig] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [checkoutStep, setCheckoutStep] = useState(1);
 
   const paymentFailed = searchParams.get('payment') === 'failed';
   const failReason = searchParams.get('reason');
@@ -299,32 +309,59 @@ export default function CheckoutScreen() {
     return Math.max(0, totalAmount - discount + ship);
   }, [totalAmount, shippingCharge, appliedPromo]);
 
-  const validate = () => {
+  const validateStep1 = () => {
     if (!form.name.trim() || form.name.trim().length < 2) {
       toast.error('Please enter your full name');
+      return false;
+    }
+    const email = form.email.trim();
+    if (email && !email.includes('@')) {
+      toast.error('Please enter a valid email address');
       return false;
     }
     if (digitsOnly(form.mobile).length !== 10) {
       toast.error('Please enter a valid 10-digit mobile number');
       return false;
     }
-    if (!form.line1.trim()) {
-      toast.error('Please enter your address');
-      return false;
-    }
-    if (!form.city.trim()) {
-      toast.error('Please enter your city');
-      return false;
-    }
-    if (!form.state.trim()) {
-      toast.error('Please select your state');
-      return false;
-    }
+    return true;
+  };
+
+  const validateStep2 = () => {
     if (digitsOnly(form.pincode).length !== 6) {
       toast.error('Please enter a valid 6-digit pincode');
       return false;
     }
+    if (!form.city.trim()) {
+      toast.error('City is required — check your pincode');
+      return false;
+    }
+    if (!form.state.trim()) {
+      toast.error('State is required — check your pincode');
+      return false;
+    }
     return true;
+  };
+
+  const validateStep3 = () => {
+    if (!form.line1.trim()) {
+      toast.error('Please enter your delivery address');
+      return false;
+    }
+    return true;
+  };
+
+  const validate = () =>
+    validateStep1() && validateStep2() && validateStep3();
+
+  const goToNextStep = () => {
+    if (checkoutStep === 1 && !validateStep1()) return;
+    if (checkoutStep === 2 && !validateStep2()) return;
+    if (checkoutStep === 3 && !validateStep3()) return;
+    setCheckoutStep((s) => Math.min(4, s + 1));
+  };
+
+  const goToPrevStep = () => {
+    setCheckoutStep((s) => Math.max(1, s - 1));
   };
 
   const buildPayload = () => ({
@@ -362,7 +399,7 @@ export default function CheckoutScreen() {
         key: data.key_id,
         amount: Math.round(Number(data.amount) * 100),
         currency: data.currency || 'INR',
-        name: 'ChairDekho',
+        name: BRAND,
         description: 'Order payment',
         order_id: data.razorpay_order_id,
         prefill: {
@@ -473,229 +510,262 @@ export default function CheckoutScreen() {
             </p>
           </div>
 
-          <form className={styles.layout} onSubmit={handlePlaceOrder}>
+          <nav className={styles.stepper} aria-label="Checkout progress">
+            <ol className={styles.stepperList}>
+              {CHECKOUT_STEPS.map(({ id, title, line1, line2 }) => (
+                <li
+                  key={id}
+                  className={`${styles.stepperItem} ${
+                    checkoutStep === id
+                      ? styles.stepperItemActive
+                      : checkoutStep > id
+                        ? styles.stepperItemDone
+                        : ''
+                  }`}
+                  aria-label={`Step ${id}: ${title}`}
+                >
+                  <span className={styles.stepperIndex}>{id}</span>
+                  <span className={styles.stepperLabel}>
+                    <span className={styles.stepperLabelDesk}>{title}</span>
+                    <span className={styles.stepperLabelMob} aria-hidden="true">
+                      <span className={styles.stepperLabelLine}>{line1}</span>
+                      {line2 ? (
+                        <span className={styles.stepperLabelLine}>{line2}</span>
+                      ) : null}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </nav>
+
+          <form
+            className={`${styles.layout} ${styles.layoutSteps}`}
+            onSubmit={handlePlaceOrder}
+          >
             <div className={styles.formsColumn}>
-              <section className={styles.card}>
-                <h2 className={styles.cardTitle}>Contact details</h2>
-                <div className={styles.formGrid}>
-                  <div className={styles.field}>
-                    <label className={styles.label} htmlFor="co-name">
-                      Full Name
-                    </label>
-                    <input
-                      id="co-name"
-                      className={styles.input}
-                      value={form.name}
-                      onChange={(e) => updateField('name', e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className={styles.field}>
-                    <label className={styles.label} htmlFor="co-mobile">
-                      Mobile Number
-                    </label>
-                    <div className={styles.phoneRow}>
-                      <span className={styles.phonePrefix}>+91</span>
+              {checkoutStep === 1 && (
+                <section className={styles.card}>
+                  <h2 className={styles.cardTitle}>Contact details</h2>
+                  <div className={styles.formGrid}>
+                    <div className={`${styles.field} ${styles.fullWidth}`}>
+                      <label className={styles.label} htmlFor="co-name">
+                        Full name
+                      </label>
                       <input
-                        id="co-mobile"
-                        className={`${styles.input} ${styles.phoneInput}`}
-                        inputMode="numeric"
-                        value={form.mobile}
-                        onChange={(e) =>
-                          updateField('mobile', digitsOnly(e.target.value).slice(0, 10))
-                        }
-                        required
+                        id="co-name"
+                        className={styles.input}
+                        value={form.name}
+                        onChange={(e) => updateField('name', e.target.value)}
+                        autoComplete="name"
                       />
                     </div>
-                  </div>
-                  <div className={`${styles.field} ${styles.fullWidth}`}>
-                    <label className={styles.label} htmlFor="co-email">
-                      Email <span className={styles.optional}>(optional)</span>
-                    </label>
-                    <input
-                      id="co-email"
-                      type="email"
-                      className={styles.input}
-                      value={form.email}
-                      onChange={(e) => updateField('email', e.target.value)}
-                      placeholder="you@example.com"
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section className={styles.card}>
-                <h2 className={styles.cardTitle}>Shipping address</h2>
-                {savedAddress && (
-                  <div className={styles.savedAddressBlock}>
-                    <label
-                      className={`${styles.payOption} ${
-                        useSavedAddress ? styles.payOptionActive : ''
-                      }`}
-                    >
+                    <div className={`${styles.field} ${styles.fullWidth}`}>
+                      <label className={styles.label} htmlFor="co-email">
+                        Email <span className={styles.optionalMark}>(optional)</span>
+                      </label>
                       <input
-                        type="radio"
-                        name="addressChoice"
-                        checked={useSavedAddress}
-                        onChange={selectSavedAddress}
+                        id="co-email"
+                        type="email"
+                        className={styles.input}
+                        value={form.email}
+                        onChange={(e) => updateField('email', e.target.value)}
+                        autoComplete="email"
+                        placeholder="you@example.com"
                       />
-                      <span>
-                        <strong>Saved address</strong>
-                        {formatAddressLines(savedAddress).map((line) => (
-                          <small key={line}>{line}</small>
+                    </div>
+                    <div className={`${styles.field} ${styles.fullWidth}`}>
+                      <label className={styles.label} htmlFor="co-mobile">
+                        Mobile number
+                      </label>
+                      <div className={styles.phoneRow}>
+                        <span className={styles.phonePrefix}>+91</span>
+                        <input
+                          id="co-mobile"
+                          className={`${styles.input} ${styles.phoneInput}`}
+                          inputMode="numeric"
+                          value={form.mobile}
+                          onChange={(e) =>
+                            updateField('mobile', digitsOnly(e.target.value).slice(0, 10))
+                          }
+                          autoComplete="tel"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.stepActions}>
+                    <CTAButton type="button" block onClick={goToNextStep}>
+                      Next
+                    </CTAButton>
+                  </div>
+                </section>
+              )}
+
+              {checkoutStep === 2 && (
+                <section className={styles.card}>
+                  <h2 className={styles.cardTitle}>Shipping pin code</h2>
+                  <p className={styles.cardHint}>
+                    Enter your 6-digit pincode. City and state will be filled automatically.
+                  </p>
+                  <div className={styles.formGrid}>
+                    <div className={`${styles.field} ${styles.fullWidth}`}>
+                      <label className={styles.label} htmlFor="co-pincode">
+                        Pincode
+                      </label>
+                      <input
+                        id="co-pincode"
+                        className={styles.input}
+                        inputMode="numeric"
+                        value={form.pincode}
+                        onChange={(e) =>
+                          updateField('pincode', digitsOnly(e.target.value).slice(0, 6))
+                        }
+                        placeholder="6-digit pincode"
+                        autoComplete="postal-code"
+                      />
+                    </div>
+                    <div className={styles.field}>
+                      <label className={styles.label} htmlFor="co-city">
+                        City
+                      </label>
+                      <input
+                        id="co-city"
+                        className={styles.input}
+                        value={form.city}
+                        onChange={(e) => updateField('city', e.target.value)}
+                        placeholder="Auto-filled from pincode"
+                      />
+                    </div>
+                    <div className={styles.field}>
+                      <label className={styles.label} htmlFor="co-state">
+                        State
+                      </label>
+                      <select
+                        id="co-state"
+                        className={styles.input}
+                        value={form.state}
+                        onChange={(e) => updateField('state', e.target.value)}
+                      >
+                        <option value="">Select state</option>
+                        {INDIAN_STATES.map((state) => (
+                          <option key={state} value={state}>
+                            {state}
+                          </option>
                         ))}
-                      </span>
-                    </label>
-                    <button
-                      type="button"
-                      className={`${styles.newAddressBtn} ${
-                        !useSavedAddress ? styles.newAddressBtnActive : ''
-                      }`}
-                      onClick={startNewAddress}
-                      aria-pressed={!useSavedAddress}
-                    >
-                      <Plus size={16} />
-                      Or enter a new address
+                      </select>
+                    </div>
+                  </div>
+                  <div className={styles.stepActions}>
+                    <button type="button" className={styles.stepBack} onClick={goToPrevStep}>
+                      Back
                     </button>
+                    <CTAButton type="button" block onClick={goToNextStep}>
+                      Next
+                    </CTAButton>
                   </div>
-                )}
-                {(!savedAddress || !useSavedAddress) && (
-                <div className={styles.formGrid}>
-                  <div className={`${styles.field} ${styles.fullWidth}`}>
-                    <label className={styles.label} htmlFor="co-line1">
-                      Address Line 1
-                    </label>
-                    <input
-                      id="co-line1"
-                      className={styles.input}
-                      value={form.line1}
-                      onChange={(e) => updateField('line1', e.target.value)}
-                      placeholder="House no., street, area"
-                      required
-                    />
-                  </div>
-                  <div className={`${styles.field} ${styles.fullWidth}`}>
-                    <label className={styles.label} htmlFor="co-line2">
-                      Address Line 2 <span className={styles.optional}>(optional)</span>
-                    </label>
-                    <input
-                      id="co-line2"
-                      className={styles.input}
-                      value={form.line2}
-                      onChange={(e) => updateField('line2', e.target.value)}
-                    />
-                  </div>
-                  <div className={`${styles.field} ${styles.fullWidth}`}>
-                    <label className={styles.label} htmlFor="co-landmark">
-                      Landmark <span className={styles.optional}>(optional)</span>
-                    </label>
-                    <input
-                      id="co-landmark"
-                      className={styles.input}
-                      value={form.landmark}
-                      onChange={(e) => updateField('landmark', e.target.value)}
-                    />
-                  </div>
-                  <div className={`${styles.field} ${styles.fullWidth}`}>
-                    <label className={styles.label} htmlFor="co-pincode">
-                      Pincode
-                    </label>
-                    <input
-                      id="co-pincode"
-                      className={styles.input}
-                      inputMode="numeric"
-                      value={form.pincode}
-                      onChange={(e) =>
-                        updateField('pincode', digitsOnly(e.target.value).slice(0, 6))
-                      }
-                      placeholder="6-digit pincode"
-                      required
-                    />
-                  </div>
-                  <div className={styles.field}>
-                    <label className={styles.label} htmlFor="co-city">
-                      City
-                    </label>
-                    <input
-                      id="co-city"
-                      className={styles.input}
-                      value={form.city}
-                      onChange={(e) => updateField('city', e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className={styles.field}>
-                    <label className={styles.label} htmlFor="co-state">
-                      State
-                    </label>
-                    <select
-                      id="co-state"
-                      className={styles.input}
-                      value={form.state}
-                      onChange={(e) => updateField('state', e.target.value)}
-                      required
-                    >
-                      <option value="">Select state</option>
-                      {INDIAN_STATES.map((state) => (
-                        <option key={state} value={state}>
-                          {state}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                )}
-              </section>
+                </section>
+              )}
 
-              <section className={styles.card}>
-                <h2 className={styles.cardTitle}>Payment method</h2>
-                <div className={styles.payOptions}>
-                  <label
-                    className={`${styles.payOption} ${
-                      paymentMethod === 'prepaid' ? styles.payOptionActive : ''
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      checked={paymentMethod === 'prepaid'}
-                      onChange={() => setPaymentMethod('prepaid')}
-                    />
-                    <span>
-                      <strong>Pay Online</strong>
-                      <small>
-                        {paymentConfig?.configured
-                          ? `Secure payment via ${
-                              paymentConfig.provider === 'razorpay' ? 'Razorpay' : 'PayU'
-                            }`
-                          : 'Online gateway not configured yet'}
-                      </small>
-                    </span>
-                  </label>
-                  <label
-                    className={`${styles.payOption} ${
-                      paymentMethod === 'cod' ? styles.payOptionActive : ''
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      checked={paymentMethod === 'cod'}
-                      onChange={() => setPaymentMethod('cod')}
-                    />
-                    <span>
-                      <strong>Cash on Delivery</strong>
-                      <small>Pay when your order arrives</small>
-                    </span>
-                  </label>
-                </div>
-              </section>
-            </div>
+              {checkoutStep === 3 && (
+                <section className={styles.card}>
+                  <h2 className={styles.cardTitle}>Delivery address</h2>
+                  {savedAddress && (
+                    <div className={styles.savedAddressBlock}>
+                      <label
+                        className={`${styles.payOption} ${
+                          useSavedAddress ? styles.payOptionActive : ''
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="addressChoice"
+                          checked={useSavedAddress}
+                          onChange={selectSavedAddress}
+                        />
+                        <span>
+                          <strong>Saved address</strong>
+                          {formatAddressLines(savedAddress).map((line) => (
+                            <small key={line}>{line}</small>
+                          ))}
+                        </span>
+                      </label>
+                      <button
+                        type="button"
+                        className={`${styles.newAddressBtn} ${
+                          !useSavedAddress ? styles.newAddressBtnActive : ''
+                        }`}
+                        onClick={startNewAddress}
+                        aria-pressed={!useSavedAddress}
+                      >
+                        <Plus size={16} />
+                        Or enter a new address
+                      </button>
+                    </div>
+                  )}
+                  {(!savedAddress || !useSavedAddress) && (
+                    <div className={styles.formGrid}>
+                      <div className={`${styles.field} ${styles.fullWidth}`}>
+                        <label className={styles.label} htmlFor="co-line1">
+                          Address line 1
+                        </label>
+                        <input
+                          id="co-line1"
+                          className={styles.input}
+                          value={form.line1}
+                          onChange={(e) => updateField('line1', e.target.value)}
+                          placeholder="House no., street, area"
+                          autoComplete="address-line1"
+                        />
+                      </div>
+                      <div className={`${styles.field} ${styles.fullWidth}`}>
+                        <label className={styles.label} htmlFor="co-line2">
+                          Address line 2 <span className={styles.optional}>(optional)</span>
+                        </label>
+                        <input
+                          id="co-line2"
+                          className={styles.input}
+                          value={form.line2}
+                          onChange={(e) => updateField('line2', e.target.value)}
+                          autoComplete="address-line2"
+                        />
+                      </div>
+                      <div className={`${styles.field} ${styles.fullWidth}`}>
+                        <label className={styles.label} htmlFor="co-landmark">
+                          Landmark <span className={styles.optional}>(optional)</span>
+                        </label>
+                        <input
+                          id="co-landmark"
+                          className={styles.input}
+                          value={form.landmark}
+                          onChange={(e) => updateField('landmark', e.target.value)}
+                        />
+                      </div>
+                      <div className={`${styles.field} ${styles.fullWidth}`}>
+                        <p className={styles.pinSummary}>
+                          Delivering to:{' '}
+                          <strong>
+                            {[form.city, form.state, form.pincode].filter(Boolean).join(', ')}
+                          </strong>
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  <div className={styles.stepActions}>
+                    <button type="button" className={styles.stepBack} onClick={goToPrevStep}>
+                      Back
+                    </button>
+                    <CTAButton type="button" block onClick={goToNextStep}>
+                      Next
+                    </CTAButton>
+                  </div>
+                </section>
+              )}
 
-            <aside className={styles.summaryPanel}>
-              <h2 className={styles.summaryTitle}>Order summary</h2>
+              {checkoutStep === 4 && (
+                <section className={`${styles.card} ${styles.stepFour}`}>
+                  <h2 className={styles.summaryTitle}>Order summary</h2>
 
-              <div className={styles.summaryItems}>
+                  <div className={styles.summaryItems}>
                 {items.map((item) => (
                   <div key={item.id} className={styles.summaryItem}>
                     <div className={styles.summaryThumb}>
@@ -817,26 +887,77 @@ export default function CheckoutScreen() {
                 <span>{formatPrice(payableTotal)}</span>
               </div>
 
-              <ShopNowButton
-                as="button"
-                type="submit"
-                text={
-                  submitting
-                    ? 'Please wait…'
-                    : paymentMethod === 'cod'
-                      ? 'Place COD Order'
-                      : 'Pay Securely'
-                }
-                variant="onLight"
-                fullWidth
-                disabled={submitting}
-                showArrow={!submitting}
-              />
+                  <div className={styles.stepFourPay}>
+                    <h2 className={styles.cardTitle}>Payment details</h2>
+                    <div className={styles.payOptions}>
+                      <label
+                        className={`${styles.payOption} ${
+                          paymentMethod === 'cod' ? styles.payOptionActive : ''
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          checked={paymentMethod === 'cod'}
+                          onChange={() => setPaymentMethod('cod')}
+                        />
+                        <span>
+                          <strong>Cash on Delivery (COD)</strong>
+                          <small>Pay when your order arrives</small>
+                        </span>
+                      </label>
+                      <label
+                        className={`${styles.payOption} ${
+                          paymentMethod === 'prepaid' ? styles.payOptionActive : ''
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          checked={paymentMethod === 'prepaid'}
+                          onChange={() => setPaymentMethod('prepaid')}
+                        />
+                        <span>
+                          <strong>Pay online</strong>
+                          <small>
+                            {paymentConfig?.configured
+                              ? `Secure payment via ${
+                                  paymentConfig.provider === 'razorpay' ? 'Razorpay' : 'PayU'
+                                }`
+                              : 'Online gateway not configured yet'}
+                          </small>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
 
-              <Link href="/cart" className={styles.backLink}>
-                ← Back to cart
-              </Link>
-            </aside>
+                  <div className={styles.stepActions}>
+                    <button type="button" className={styles.stepBack} onClick={goToPrevStep}>
+                      Back
+                    </button>
+                    <ShopNowButton
+                      as="button"
+                      type="submit"
+                      text={
+                        submitting
+                          ? 'Please wait…'
+                          : paymentMethod === 'cod'
+                            ? 'Place COD Order'
+                            : 'Pay Securely'
+                      }
+                      variant="onLight"
+                      fullWidth
+                      disabled={submitting}
+                      showArrow={!submitting}
+                    />
+                  </div>
+
+                  <Link href="/cart" className={styles.backLink}>
+                    ← Back to cart
+                  </Link>
+                </section>
+              )}
+            </div>
           </form>
         </div>
       </main>

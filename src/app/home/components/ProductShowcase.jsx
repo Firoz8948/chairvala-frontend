@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
+import CTAButton from '@/components/CTAButton';
 import productService from '@/lib/services/products';
 import { useCart } from '@/context/CartContext';
 import toast from 'react-hot-toast';
@@ -69,12 +69,7 @@ export default function ProductShowcase() {
     <section className={`${styles.section} ${styles.productSection}`}>
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>TRENDING NOW</h2>
-        <div className={styles.sectionTitleRow}>
-          <p className={styles.sectionSubtitle}>Shop What’s In Demand</p>
-          <Link href="/shop" className={styles.sectionLink}>
-            View All <ArrowRight size={16} />
-          </Link>
-        </div>
+        <p className={styles.sectionSubtitle}>Shop What’s In Demand</p>
       </div>
 
       {loading ? (
@@ -100,6 +95,14 @@ export default function ProductShowcase() {
           ))}
         </div>
       )}
+
+      {!loading && products.length > 0 ? (
+        <div className={styles.sectionCtaRow}>
+          <CTAButton href="/shop">
+            View all products <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+          </CTAButton>
+        </div>
+      ) : null}
     </section>
   );
 }

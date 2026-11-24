@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { ArrowLeft } from 'lucide-react';
 import authService from '@/lib/services/auth';
+import { BRAND } from '@/lib/seo';
 import styles from './login.module.css';
 
 const OTP_LENGTH = 4;
@@ -130,7 +131,7 @@ export default function CustomerLoginScreen() {
   };
 
   const finishLogin = (isNew) => {
-    toast.success(isNew ? 'Welcome to ChairDekho!' : 'Logged in');
+    toast.success(isNew ? `Welcome to ${BRAND}!` : 'Logged in');
     router.replace(safeNext);
   };
 
@@ -197,8 +198,8 @@ export default function CustomerLoginScreen() {
     <div className={styles.page}>
       <div className={styles.hero}>
         <Image
-          src="/images/login/chairdekhohero1.webp"
-          alt="ChairDekho chairs"
+          src="/images/trust/quality.webp"
+          alt={`${BRAND} – plastic and steel products`}
           width={1600}
           height={600}
           priority

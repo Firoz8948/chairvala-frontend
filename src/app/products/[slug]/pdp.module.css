@@ -166,7 +166,11 @@
   line-height: 1.15;
   letter-spacing: -0.02em;
   margin: 0;
-  color: #1c1917;
+  color: #000000;
+}
+
+.title .brandHeadingAccent {
+  color: #000000;
 }
 
 .priceRow {
@@ -344,28 +348,10 @@
   margin-top: 8px;
 }
 
-.addToBagBtn {
-  width: 100%;
+.addToBagCta {
   max-width: 420px;
-  min-height: 52px;
-  border: none;
-  background: #000000;
-  color: #ffffff;
-  font-size: 0.88rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s ease, opacity 0.2s ease;
-}
-
-.addToBagBtn:hover:not(:disabled) {
-  background: #222222;
-}
-
-.addToBagBtn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+  min-height: 48px;
+  font-size: 0.78rem;
 }
 
 .trustIcons {
@@ -385,21 +371,43 @@
   gap: 8px;
 }
 
-.trustIconImg {
-  width: clamp(60px, 6.5vw, 80px);
-  height: clamp(60px, 6.5vw, 80px);
-  object-fit: contain;
-  display: block;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.12));
+.trustIconGlyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(44px, 5vw, 52px);
+  height: clamp(44px, 5vw, 52px);
+  border-radius: 50%;
+  background: rgba(0, 0, 165, 0.1);
+  color: var(--brand-blue);
+}
+
+.trustIconGlyph svg {
+  width: clamp(22px, 2.5vw, 26px);
+  height: clamp(22px, 2.5vw, 26px);
+}
+
+.trustIconItem:nth-child(4n + 2) .trustIconGlyph,
+.trustIconItem:nth-child(4n) .trustIconGlyph {
+  background: rgba(165, 0, 0, 0.1);
+  color: var(--brand-maroon);
 }
 
 .trustIconLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #57534e;
-  line-height: 1.3;
+  line-height: 1.2;
+}
+
+.trustIconLabel span {
+  display: block;
 }
 
 .descriptionBlock {
@@ -756,16 +764,27 @@
 
   .trustIcons {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px 8px;
+    gap: 6px 4px;
   }
 
   .trustIconLabel {
-    font-size: var(--text-micro);
+    font-size: clamp(0.52rem, 2.6vw, 0.62rem);
+    letter-spacing: 0.03em;
   }
 
-  .trustIconImg {
-    width: clamp(48px, 14vw, 60px);
-    height: clamp(48px, 14vw, 60px);
+  .trustIconGlyph {
+    width: 40px;
+    height: 40px;
+  }
+
+  .trustIconGlyph svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .trustIconItem {
+    gap: 6px;
+    min-width: 0;
   }
 }
 
@@ -811,7 +830,7 @@
     width: 100%;
   }
 
-  .addToBagBtn {
+  .addToBagCta {
     max-width: none;
   }
 }

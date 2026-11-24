@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import styles from './login.module.css';
+import Logo from '@/components/Logo/Logo';
 import authService from '@/lib/services/auth';
+import { BRAND_DOMAIN, POWERED_BY_TAGLINE } from '@/lib/seo';
+import styles from './login.module.css';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -35,8 +37,11 @@ export default function AdminLoginPage() {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
-          <h1 className={styles.brand}>ChairDekho Admin</h1>
-          <p className={styles.subtitle}>Sign in to manage your store</p>
+          <Logo size="sm" showTagline className={styles.logoWrap} />
+          <h1 className={styles.brand}>Admin</h1>
+          <p className={styles.subtitle}>
+            Sign in to manage {BRAND_DOMAIN} ({POWERED_BY_TAGLINE})
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>

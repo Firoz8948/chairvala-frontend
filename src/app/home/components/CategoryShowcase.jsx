@@ -2,21 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Armchair, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Package, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import CTAButton from '@/components/CTAButton';
 import productService from '@/lib/services/products';
 import styles from '../home.module.css';
 import railStyles from './categoryRail.module.css';
-
-const CIRCLE_COLORS = [
-  '#fdecec', // rose
-  '#e6f2fc', // sky
-  '#e8f6ec', // mint
-  '#fff4d9', // butter
-  '#efe9fb', // lavender
-  '#e3f6f4', // aqua
-  '#fdeee4', // peach
-  '#edf0f5', // mist
-];
 
 const resolveImageUrl = (url) => {
   if (!url) return null;
@@ -86,13 +76,8 @@ export default function CategoryShowcase() {
   return (
     <section className={`${styles.section} ${styles.categorySection}`}>
       <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>SHOP CHAIRS BY TYPE</h2>
-        <div className={styles.sectionTitleRow}>
-          <p className={styles.sectionSubtitle}>The right chair for every space</p>
-          <Link href="/shop" className={styles.sectionLink}>
-            View All <ArrowRight size={16} />
-          </Link>
-        </div>
+        <h2 className={styles.sectionTitle}>CATEGORIES WE OFFER</h2>
+        <p className={styles.sectionSubtitle}>Plastic chairs, plastic items & steel products</p>
       </div>
 
       {!loading && categories.length === 0 ? (
@@ -109,7 +94,7 @@ export default function CategoryShowcase() {
                     <span className={railStyles.skeletonText} />
                   </div>
                 ))
-              : categories.map((cat, idx) => {
+              : categories.map((cat) => {
                   const img = resolveImageUrl(cat.image_url);
                   return (
                     <Link
@@ -117,15 +102,12 @@ export default function CategoryShowcase() {
                       href={`/shop?category=${encodeURIComponent(cat.slug)}`}
                       className={railStyles.item}
                     >
-                      <span
-                        className={railStyles.circle}
-                        style={{ '--circle-bg': CIRCLE_COLORS[idx % CIRCLE_COLORS.length] }}
-                      >
+                      <span className={railStyles.circle}>
                         {img ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={img} alt="" className={railStyles.image} loading="lazy" />
                         ) : (
-                          <Armchair className={railStyles.fallbackIcon} strokeWidth={1.25} />
+                          <Package className={railStyles.fallbackIcon} strokeWidth={1.25} />
                         )}
                       </span>
                       <span className={railStyles.name}>{cat.name}</span>
@@ -168,6 +150,14 @@ export default function CategoryShowcase() {
           )}
         </div>
       )}
+
+      {!loading && categories.length > 0 ? (
+        <div className={styles.sectionCtaRow}>
+          <CTAButton href="/shop">
+            View all categories <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+          </CTAButton>
+        </div>
+      ) : null}
     </section>
   );
 }

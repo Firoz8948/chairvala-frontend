@@ -1,19 +1,22 @@
-import { fetchApi } from '@/lib/seo';
-import { resolveBannerUrl } from '@/lib/banners';
-import BannerSlider from './BannerSlider';
-import styles from './banner.module.css';
+import { BRAND, HOME_TITLE, fetchApi } from '@/lib/seo';
+import { isBundledDefaultHero, resolveBannerUrl } from '@/lib/banners';
+import HomeHeroLayout from './HomeHeroLayout';
 
 async function getSlides(device) {
   const { data } = await fetchApi(`/banners/?device=${device}`, { revalidate: 30 });
   if (!Array.isArray(data)) return [];
   return data
     .filter((slide) => slide.image_url)
-    .map((slide) => ({
-      id: slide.id,
-      src: resolveBannerUrl(slide.image_url),
-      alt: slide.title || 'ChairDekho – chairs in Vasai Virar',
-      href: slide.link_url || '',
-    }));
+    .map((slide) => {
+      const imageUrl = slide.image_url || '';
+      return {
+        id: slide.id,
+        src: resolveBannerUrl(imageUrl),
+        alt: slide.title || `${BRAND} – plastic & steel products online`,
+        href: slide.link_url || '',
+        isDefaultHero: isBundledDefaultHero(device, imageUrl),
+      };
+    });
 }
 
 export default async function HomeBanner() {
@@ -23,16 +26,10 @@ export default async function HomeBanner() {
   ]);
 
   return (
-    <section className={styles.banner} aria-labelledby="home-banner-heading">
-      <h1 id="home-banner-heading" className={styles.srOnly}>
-        ChairDekho – All Types of Chairs at Affordable Prices in Vasai Virar
-      </h1>
-      <div className={styles.desktopOnly}>
-        <BannerSlider slides={desktopSlides} device="desktop" />
-      </div>
-      <div className={styles.mobileOnly}>
-        <BannerSlider slides={mobileSlides} device="mobile" />
-      </div>
-    </section>
+    <HomeHeroLayout
+      homeTitle={HOME_TITLE}
+      desktopSlides={desktopSlides}
+      mobileSlides={mobileSlides}
+    />
   );
 }

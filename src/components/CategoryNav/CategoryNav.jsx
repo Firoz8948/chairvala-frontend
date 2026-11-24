@@ -24,7 +24,7 @@ const loadCategories = () => {
   return categoriesRequest;
 };
 
-function CategoryNavBar({ activeSlug }) {
+function CategoryNavBar({ activeSlug, variant = 'default' }) {
   const [categories, setCategories] = useState([]);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
@@ -77,7 +77,10 @@ function CategoryNavBar({ activeSlug }) {
   const overflowing = canPrev || canNext;
 
   return (
-    <nav className={styles.bar} aria-label="Shop by category">
+    <nav
+      className={`${styles.bar} ${variant === 'hero' ? styles.barHero : ''}`.trim()}
+      aria-label="Shop by category"
+    >
       <div className={styles.inner}>
         {overflowing && (
           <button
@@ -123,17 +126,17 @@ function CategoryNavBar({ activeSlug }) {
   );
 }
 
-function CategoryNavWithParams() {
+function CategoryNavWithParams({ variant }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeSlug = pathname === '/shop' ? searchParams.get('category') || '' : null;
-  return <CategoryNavBar activeSlug={activeSlug} />;
+  return <CategoryNavBar activeSlug={activeSlug} variant={variant} />;
 }
 
-export default function CategoryNav() {
+export default function CategoryNav({ variant = 'default' }) {
   return (
-    <Suspense fallback={<CategoryNavBar activeSlug={null} />}>
-      <CategoryNavWithParams />
+    <Suspense fallback={<CategoryNavBar activeSlug={null} variant={variant} />}>
+      <CategoryNavWithParams variant={variant} />
     </Suspense>
   );
 }

@@ -2,14 +2,19 @@ import { Suspense } from 'react';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import JsonLd from '@/components/Seo/JsonLd';
-import { buildBreadcrumbJsonLd, buildCategorySeo, fetchApi, pageMetadata } from '@/lib/seo';
-import CategoryMarquee from '@/app/home/components/CategoryMarquee';
+import {
+  BRAND,
+  buildBreadcrumbJsonLd,
+  buildCategorySeo,
+  fetchApi,
+  pageMetadata,
+} from '@/lib/seo';
 import ShopScreen from './components/ShopScreen';
 import styles from './shop.module.css';
 
-const SHOP_TITLE = 'Shop All Types of Chairs Online in Vasai Virar | ChairDekho';
+const SHOP_TITLE = `Shop Plastic Chairs, Plastic Products & Steel Items Online | ${BRAND}`;
 const SHOP_DESCRIPTION =
-  'Browse plastic, arm, armless, dining, garden, office and kids chairs and stools at affordable prices. Fast delivery in Vasai, Virar & Nalasopara. Cash on delivery.';
+  'Browse plastic chairs, stools, tables, household plastic items, steel furniture, racks and steel products at affordable prices. Delivery across India. Cash on delivery.';
 
 async function findCategory(searchParams) {
   const slug = typeof searchParams?.category === 'string' ? searchParams.category.trim() : '';
@@ -72,7 +77,6 @@ export default async function ShopPage({ searchParams }) {
           <ShopScreen />
         </Suspense>
       </main>
-      <CategoryMarquee />
       <Footer />
     </div>
   );

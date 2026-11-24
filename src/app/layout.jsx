@@ -5,6 +5,7 @@ import Providers from '@/components/Providers';
 import JsonLd from '@/components/Seo/JsonLd';
 import {
   BRAND,
+  BRAND_DOMAIN,
   DEFAULT_OG_IMAGE,
   HOME_DESCRIPTION,
   HOME_TITLE,
@@ -21,16 +22,12 @@ export const metadata = {
     template: `%s | ${BRAND}`,
   },
   description: HOME_DESCRIPTION,
-  applicationName: BRAND,
+  applicationName: BRAND_DOMAIN,
   keywords: SITE_KEYWORDS,
   icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: '48x48' },
-      { url: '/icon-192.png', type: 'image/png', sizes: '192x192' },
-      { url: '/icon.png', type: 'image/png', sizes: '512x512' },
-    ],
-    shortcut: '/favicon.ico',
-    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
+    icon: [{ url: '/images/brand/chairvala.png', type: 'image/png', sizes: '2172x724' }],
+    shortcut: '/images/brand/chairvala.png',
+    apple: [{ url: '/images/brand/chairvala.png', sizes: '2172x724', type: 'image/png' }],
   },
   robots: {
     index: true,

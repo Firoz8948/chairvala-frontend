@@ -1,34 +1,34 @@
-import Image from 'next/image';
+import { ShieldCheck, Truck, RotateCcw, Package } from 'lucide-react';
+import { BRAND } from '@/lib/seo';
 import styles from '../home.module.css';
 
 const PRINCIPLES = [
   {
-    num: '01',
-    title: 'Variety',
-    desc: 'All types of chairs in one place – plastic, arm, dining, garden, office and kids.',
-    icon: '/images/trust/designs.webp',
+    title: 'Secure payment',
+    description: 'Encrypted checkout and trusted payment methods for every order.',
+    Icon: ShieldCheck,
   },
   {
-    num: '02',
-    title: 'Price',
-    desc: 'Affordable prices on every chair. Bulk orders for homes, shops and events welcome.',
-    icon: '/images/trust/valueformoney.webp',
+    title: 'Fast delivery',
+    description: 'Careful packing and dependable shipping so your order arrives on time.',
+    Icon: Truck,
   },
   {
-    num: '03',
-    title: 'Comfort',
-    desc: 'Sturdy, comfortable chairs built for everyday use, indoors and outdoors.',
-    icon: '/images/trust/quality.webp',
+    title: 'Easy return',
+    description: 'Straightforward returns and support if something is not as expected.',
+    Icon: RotateCcw,
   },
   {
-    num: '04',
-    title: '5 Star Ratings',
-    desc: 'Rated 5 stars on Google by happy customers across Vasai, Virar and Nalasopara.',
-    icon: '/images/trust/rating.webp',
+    title: 'Bulk order available',
+    description: 'Volume orders and dealer enquiries welcome — we scale with your need.',
+    Icon: Package,
   },
 ];
 
-export default function WhyChooseUs({ title = 'WHY CHAIRDEKHO', subtitle = 'What we stand by' }) {
+export default function WhyChooseUs({
+  title = `WHY ${BRAND.toUpperCase()}`,
+  subtitle = 'What we stand by',
+}) {
   return (
     <section className={`${styles.section} ${styles.featuresSection}`}>
       <div className={styles.sectionHeader}>
@@ -37,18 +37,22 @@ export default function WhyChooseUs({ title = 'WHY CHAIRDEKHO', subtitle = 'What
       </div>
 
       <ul className={styles.principlesList}>
-        {PRINCIPLES.map((item) => (
-          <li key={item.num} className={styles.principleItem}>
-            <span className={styles.principleNum} aria-hidden="true">
-              {item.num}
-            </span>
-            <div className={styles.principleIcon}>
-              <Image src={item.icon} alt="" width={400} height={400} sizes="(max-width: 768px) 96px, 140px" />
-            </div>
-            <h3 className={styles.principleTitle}>{item.title}</h3>
-            <p className={styles.principleDesc}>{item.desc}</p>
-          </li>
-        ))}
+        {PRINCIPLES.map((item) => {
+          const Icon = item.Icon;
+          return (
+            <li key={item.title} className={styles.principleItem}>
+              <div className={styles.principleIcon} aria-hidden="true">
+                <Icon strokeWidth={1} absoluteStrokeWidth />
+              </div>
+              <div className={styles.principleCopy}>
+                <h3 className={styles.principleTitle} data-brand-split="off">
+                  {item.title}
+                </h3>
+                <p className={styles.principleDesc}>{item.description}</p>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

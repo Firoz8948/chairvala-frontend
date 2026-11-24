@@ -1,3 +1,25 @@
+.wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.withTagline {
+  max-width: min(100%, 320px);
+}
+
+.centered {
+  align-items: center;
+  text-align: center;
+}
+
+.centered .tagline {
+  padding-left: 0;
+  width: 100%;
+}
+
 .logo {
   display: inline-flex;
   align-items: center;
@@ -7,35 +29,48 @@
   transition: opacity var(--transition-fast, 0.2s ease);
 }
 
+.tagline {
+  padding-left: 2px;
+}
+
 .logo:hover {
   opacity: 0.88;
 }
 
 .image {
   display: block;
-  height: var(--logo-h);
-  width: auto;
-  aspect-ratio: 1355 / 842;
+  /* Match PNG (2172×724); explicit width avoids Next/Image max-width squish */
+  height: var(--logo-h) !important;
+  width: calc(var(--logo-h) * 2172 / 724) !important;
+  max-width: none;
+  object-fit: contain;
 }
 
-.sm {
+.wrap.sm {
   --logo-h: 40px;
 }
 
-.md {
-  --logo-h: clamp(44px, 3.4vw, 52px);
+.wrap.md {
+  --logo-h: clamp(34px, 2.6vw, 42px);
 }
 
-.lg {
+.wrap.lg {
   --logo-h: clamp(64px, 5vw, 80px);
 }
 
 @media (max-width: 768px) {
-  .md {
-    --logo-h: 40px;
+  .wrap.md {
+    --logo-h: 32px;
   }
 
-  .lg {
+  .wrap.lg {
     --logo-h: 60px;
+  }
+}
+
+/* Main navbar: max logo height inside fixed 64px header bar (desktop) */
+@media (min-width: 1025px) {
+  .wrap.nav.md {
+    --logo-h: 56px;
   }
 }

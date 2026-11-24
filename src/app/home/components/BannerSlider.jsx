@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, ImagePlus } from 'lucide-react';
 import { BANNER_SIZES } from '@/lib/banners';
+import BannerHeroCopy from './BannerHeroCopy';
 import styles from './banner.module.css';
 
 const AUTOPLAY_MS = 5000;
@@ -108,10 +109,13 @@ export default function BannerSlider({ slides, device }) {
                   className={styles.slideImage}
                   loading="lazy"
                   decoding="async"
-                  fetchpriority={i === 0 ? 'high' : 'low'}
+                  fetchPriority={i === 0 ? 'high' : 'low'}
                   draggable={false}
                 />
               </SlideLink>
+              {slide.isDefaultHero ? (
+                <BannerHeroCopy href={slide.href || '/shop'} variant={device} />
+              ) : null}
             </div>
           ))}
         </div>

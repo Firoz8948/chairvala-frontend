@@ -9,6 +9,7 @@ import ColorSwatches, {
   resolveCardImages,
 } from '@/components/ColorSwatches/ColorSwatches';
 import { productEnquiryUrl } from '@/lib/whatsapp';
+import CTAButton from '@/components/CTAButton';
 import cardStyles from './ProductCard.module.css';
 
 const resolveImageUrl = (url) => {
@@ -73,6 +74,7 @@ export default function ProductCard({
 
   return (
     <article
+      data-brand-split="off"
       className={`${styles.productCard} ${hasHoverImage ? styles.productCardHasHoverImg : ''} ${className}`.trim()}
     >
       <div className={styles.productImageWrap}>
@@ -130,13 +132,14 @@ export default function ProductCard({
 
         <div className={styles.productCardActions}>
           {onAddToBag ? (
-            <button
-              type="button"
-              className={styles.productBuyNowBtn}
+            <CTAButton
+              compact
+              block
+              className={styles.productBuyNowCta}
               onClick={(e) => onAddToBag(e, product, activeSwatch)}
             >
-              Add to Cart
-            </button>
+              Add to cart
+            </CTAButton>
           ) : null}
           <a
             href={productEnquiryUrl(product.name, href)}

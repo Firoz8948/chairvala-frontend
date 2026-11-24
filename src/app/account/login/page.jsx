@@ -3,7 +3,7 @@ import CustomerLoginScreen from './CustomerLoginScreen';
 
 export const metadata = {
   title: 'Login',
-  description: 'Log in to ChairDekho with your mobile number and OTP.',
+  description: 'Log in to Chairvala.com with your mobile number and OTP.',
   robots: { index: false, follow: true },
 };
 

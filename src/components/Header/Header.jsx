@@ -1,19 +1,36 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { Suspense, useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ShoppingCart, User, ArrowRight, ArrowUpRight, Phone } from 'lucide-react';
+import {
+  Search,
+  Menu,
+  X,
+  ShoppingCart,
+  User,
+  ArrowRight,
+  Truck,
+  ShieldCheck,
+  BadgeCheck,
+} from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import authService from '@/lib/services/auth';
-import { CONTACT } from '@/lib/seo';
+import { BRAND, CONTACT } from '@/lib/seo';
 import Logo from '@/components/Logo/Logo';
 import SocialLinks from '@/components/SocialLinks/SocialLinks';
 import CategoryNav from '@/components/CategoryNav/CategoryNav';
+import HeaderSearch from '@/components/Header/HeaderSearch';
 import { FEATURES } from '@/lib/features';
 import styles from './header.module.css';
 
 const DRAWER_ANIMATION_MS = 300;
+
+const TOP_BAR_TRUST_ITEMS = [
+  { label: 'EASY SHIPPING', Icon: Truck },
+  { label: 'SECURE PAYMENT', Icon: ShieldCheck },
+  { label: 'CUSTOMER TRUST', Icon: BadgeCheck },
+];
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -66,28 +83,46 @@ export default function Header() {
     { label: 'Contact', href: '/contact-us' },
   ].filter(Boolean);
 
-  const phoneHref = `tel:+${CONTACT.whatsapp}`;
+  const bulkOrderHref = `tel:${CONTACT.phone.replace(/\s+/g, '')}`;
+  const isHome = pathname === '/';
+  const isCheckout = pathname === '/checkout' || pathname?.startsWith('/checkout/');
 
   return (
     <>
       <div className={styles.topBar}>
         <div className={styles.topBarInner}>
-          <a
-            href={CONTACT.mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.topBarMapLink}
-            title="View on Google Maps"
-          >
-            <span className={styles.topBarTagline}>Best Chairs in Vasai Virar</span>
-            <span className={styles.topBarMapBtn} aria-hidden="true">
-              <ArrowUpRight size={14} strokeWidth={2.25} />
-            </span>
-          </a>
-          <a href={phoneHref} className={styles.topBarPhone}>
-            <Phone size={13} strokeWidth={2} className={styles.topBarPhoneIcon} />
-            <span className={styles.topBarPhoneLabel}>For Bulk Order:</span>
-            <span className={styles.topBarPhoneNumber}>{CONTACT.phone}</span>
+          <div className={styles.topBarPromo}>
+            <div className={styles.topBarPromoDesktop}>
+              {TOP_BAR_TRUST_ITEMS.map((item, index) => (
+                <span key={item.label} className={styles.topBarTrustGroup}>
+                  {index > 0 ? <span className={styles.topBarSep} aria-hidden="true">|</span> : null}
+                  <span className={styles.topBarTrustItem}>
+                    <item.Icon size={15} strokeWidth={2} aria-hidden="true" />
+                    {item.label}
+                  </span>
+                </span>
+              ))}
+            </div>
+            <div className={styles.topBarPromoMobile} aria-live="polite">
+              {TOP_BAR_TRUST_ITEMS.map((item, index) => (
+                <span
+                  key={item.label}
+                  className={
+                    index === 0
+                      ? styles.topBarPromoLineA
+                      : index === 1
+                        ? styles.topBarPromoLineB
+                        : styles.topBarPromoLineC
+                  }
+                >
+                  <item.Icon size={14} strokeWidth={2} aria-hidden="true" />
+                  {item.label}
+                </span>
+              ))}
+            </div>
+          </div>
+          <a href={bulkOrderHref} className={styles.topBarPhone}>
+            Bulk Order: {CONTACT.phone}
           </a>
         </div>
       </div>
@@ -107,7 +142,7 @@ export default function Header() {
               <Menu size={24} strokeWidth={1.5} />
             </button>
 
-            <Logo />
+            <Logo nav />
           </div>
 
           {/* ================= CENTER SECTION: nav links ================= */}
@@ -127,6 +162,15 @@ export default function Header() {
           <div className={styles.rightSection}>
             {/* Icon Actions */}
             <div className={styles.iconActions}>
+              <Suspense
+                fallback={
+                  <span className={styles.iconBtn} aria-hidden="true">
+                    <Search size={20} strokeWidth={1.5} />
+                  </span>
+                }
+              >
+                <HeaderSearch />
+              </Suspense>
               <Link href="/cart" className={styles.iconBtn} aria-label="Shopping Cart">
                 <ShoppingCart size={20} strokeWidth={1.5} />
                 {totalItems > 0 && (
@@ -144,7 +188,7 @@ export default function Header() {
         </div>
       </header>
 
-      <CategoryNav />
+      {!isHome && !isCheckout ? <CategoryNav /> : null}
 
       {/* ================= MOBILE DRAWER MENU ================= */}
       {(mobileMenuOpen || mobileMenuClosing) && (
@@ -228,7 +272,7 @@ export default function Header() {
                 items={['whatsapp', 'instagram', 'email', 'maps']}
                 className={styles.drawerSocial}
               />
-              <p>© {new Date().getFullYear()} ChairDekho. All rights reserved.</p>
+              <p>© {new Date().getFullYear()} {BRAND}. All rights reserved.</p>
             </div>
           </div>
         </div>

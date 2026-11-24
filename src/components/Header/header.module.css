@@ -1,92 +1,176 @@
 /* ================= TOP BAR ================= */
 .topBar {
-  background: #000000;
-  color: #f5f5f5;
+  background: #ffffff;
+  color: #6b7280;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   font-family: var(--font-family-sans);
   font-size: 0.8rem;
-  line-height: 1;
+  line-height: 1.3;
 }
 
 .topBarInner {
   max-width: var(--container-2xl);
   margin: 0 auto;
   min-height: 38px;
-  padding: 6px var(--gutter-inline);
+  padding: 8px var(--gutter-inline);
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.topBarMapLink {
+.topBarPromo {
+  flex: 1;
+  min-width: 0;
+}
+
+.topBarPromoDesktop,
+.topBarPromoMobile {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  font-size: inherit;
+  color: #4b5563;
+  text-transform: uppercase;
+}
+
+.topBarPromoDesktop {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+}
+
+.topBarTrustGroup {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  color: inherit;
+}
+
+.topBarTrustItem,
+.topBarPromoLineA,
+.topBarPromoLineB,
+.topBarPromoLineC {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.topBarSep {
+  margin: 0 12px;
+  color: #9ca3af;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.topBarPromoMobile {
+  display: none;
+  position: relative;
+  height: 1.35em;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.topBarPromoLineA,
+.topBarPromoLineB,
+.topBarPromoLineC {
+  position: absolute;
+  left: 0;
+  top: 0;
+  line-height: 1.35;
+}
+
+.topBarPromoLineA {
+  animation: topBarTrustCycle1 9s ease-in-out infinite;
+}
+
+.topBarPromoLineB {
+  opacity: 0;
+  animation: topBarTrustCycle2 9s ease-in-out infinite;
+}
+
+.topBarPromoLineC {
+  opacity: 0;
+  animation: topBarTrustCycle3 9s ease-in-out infinite;
+}
+
+@keyframes topBarTrustCycle1 {
+  0%,
+  28% {
+    opacity: 1;
+  }
+  33%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes topBarTrustCycle2 {
+  0%,
+  28% {
+    opacity: 0;
+  }
+  33%,
+  61% {
+    opacity: 1;
+  }
+  66%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes topBarTrustCycle3 {
+  0%,
+  61% {
+    opacity: 0;
+  }
+  66%,
+  94% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topBarPromoLineA,
+  .topBarPromoLineB,
+  .topBarPromoLineC {
+    animation: none;
+    position: static;
+  }
+
+  .topBarPromoLineB,
+  .topBarPromoLineC {
+    display: none;
+  }
+
+  .topBarPromoMobile {
+    height: auto;
+  }
+}
+
+.topBarPhone {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: #6b7280;
   text-decoration: none;
-}
-
-.topBarMapLink:focus-visible {
-  outline: 2px solid #ffffff;
-  outline-offset: 3px;
-}
-
-.topBarTagline {
   font-weight: 600;
   letter-spacing: 0.02em;
   white-space: nowrap;
   transition: color var(--transition-fast);
 }
 
-.topBarMapLink:hover .topBarTagline {
-  color: #d9c2b0;
-}
-
-.topBarMapBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-  border-radius: 999px;
-  background: #ffffff;
-  color: #000000;
-  transition: background-color var(--transition-fast), color var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.topBarMapLink:hover .topBarMapBtn,
-.topBarMapLink:focus-visible .topBarMapBtn {
-  background: #5c3d2e;
-  color: #ffffff;
-  transform: translate(1px, -1px);
-}
-
-.topBarPhone {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: inherit;
-  white-space: nowrap;
-  transition: color var(--transition-fast);
-}
-
 .topBarPhone:hover {
-  color: #d9c2b0;
+  color: #374151;
 }
 
-.topBarPhoneIcon {
-  flex-shrink: 0;
-}
-
-.topBarPhoneLabel {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.topBarPhoneNumber {
-  font-weight: 700;
-  letter-spacing: 0.02em;
+.topBarPhone:focus-visible {
+  outline: 2px solid #9ca3af;
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* ================= MAIN HEADER ================= */
@@ -101,11 +185,12 @@
 .inner {
   max-width: var(--container-2xl);
   margin: 0 auto;
-  height: 84px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--gutter-inline);
+  overflow: hidden;
 }
 
 /* ================= DESKTOP 3-SECTION GRID ================= */
@@ -143,7 +228,7 @@
   font-weight: 400;
   color: #000000;
   transition: color var(--transition-fast);
-  padding: 6px 2px;
+  padding: 4px 2px;
   white-space: nowrap;
 }
 
@@ -169,9 +254,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   color: #000000;
   padding: 6px;
+  margin: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: pointer;
+  line-height: 0;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
   transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.iconBtn:focus-visible {
+  outline: 2px solid #5c3d2e;
+  outline-offset: 2px;
 }
 
 .iconBtn:hover {
@@ -193,6 +293,68 @@
   font-weight: 700;
   line-height: 18px;
   text-align: center;
+}
+
+/* ================= HEADER SEARCH ================= */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.searchMobileOnly {
+  display: none;
+}
+
+.searchDesktopOnly {
+  display: flex;
+}
+
+.searchWrap {
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: min(280px, 44vw);
+  margin-right: 4px;
+  gap: 2px;
+}
+
+.searchInput {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  padding: 6px 4px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  background: transparent;
+  font-family: var(--font-family-sans);
+  font-size: 0.875rem;
+  color: #000000;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.searchInput:focus {
+  border-bottom-color: #5c3d2e;
+}
+
+@media (max-width: 1024px) {
+  .searchMobileOnly {
+    display: inline-flex;
+  }
+
+  .searchDesktopOnly {
+    display: none;
+  }
 }
 
 /* ================= MOBILE HAMBURGER BUTTON ================= */
@@ -377,7 +539,7 @@
 /* ================= RESPONSIVE BREAKPOINTS ================= */
 @media (max-width: 1024px) {
   .inner {
-    height: 70px;
+    height: 56px;
   }
 
   .desktopNav {
@@ -414,6 +576,16 @@
   }
 }
 
+@media (max-width: 640px) {
+  .topBarPromoDesktop {
+    display: none;
+  }
+
+  .topBarPromoMobile {
+    display: block;
+  }
+}
+
 @media (max-width: 600px) {
   .topBarInner {
     min-height: 34px;
@@ -421,8 +593,8 @@
   }
 }
 
-@media (max-width: 420px) {
-  .topBarPhoneLabel {
-    display: none;
+@media (max-width: 480px) {
+  .topBarPhone {
+    font-size: 0.68rem;
   }
 }

@@ -1,4 +1,5 @@
 import { ExternalLink, PenLine } from 'lucide-react';
+import CTAButton from '@/components/CTAButton';
 import { CONTACT, fetchApi } from '@/lib/seo';
 import homeStyles from '../home.module.css';
 import styles from './googleReviews.module.css';
@@ -71,27 +72,16 @@ export default async function GoogleReviews() {
             </>
           ) : (
             <p className={styles.basedOn}>
-              Your review helps other families and businesses in Vasai-Virar find the right
-              chairs.
+              Your review helps other shoppers discover quality plastic and steel products from us.
             </p>
           )}
           <div className={styles.actions}>
-            <a
-              href={reviewUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`${styles.btn} ${styles.btnPrimary}`}
-            >
-              <PenLine size={16} aria-hidden="true" /> Write a Review
-            </a>
-            <a
-              href={mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`${styles.btn} ${styles.btnSecondary}`}
-            >
-              See All Reviews <ExternalLink size={14} aria-hidden="true" />
-            </a>
+            <CTAButton href={reviewUrl} target="_blank" rel="noopener noreferrer">
+              <PenLine size={16} strokeWidth={2} aria-hidden="true" /> Write a review
+            </CTAButton>
+            <CTAButton href={mapsUrl} target="_blank" rel="noopener noreferrer">
+              See all reviews <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
+            </CTAButton>
           </div>
         </div>
 

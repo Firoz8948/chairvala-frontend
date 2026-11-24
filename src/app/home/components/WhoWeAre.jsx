@@ -1,84 +1,152 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Phone } from 'lucide-react';
-import { CONTACT } from '@/lib/seo';
+import CTAButton from '@/components/CTAButton';
+import { resolveCardImages } from '@/components/ColorSwatches/ColorSwatches';
+import productService from '@/lib/services/products';
+import { BRAND, BRAND_DOMAIN, CONTACT, LEGACY_BRAND, POWERED_BY_TAGLINE } from '@/lib/seo';
 import styles from '../home.module.css';
 
 const PHONE_HREF = `tel:${CONTACT.phone.replace(/\s+/g, '')}`;
 
+/** 1:1 tiles — set gridColumn / gridRow on a 6×6 grid (line-based spans). */
+const COLLAGE_SLOTS = [
+  { id: 1, gridColumn: '1 / 4', gridRow: '1 / 4' },
+  { id: 2, gridColumn: '4 / 6', gridRow: '1 / 3' },
+  { id: 3, gridColumn: '6 / 7', gridRow: '1 / 2' },
+  { id: 4, gridColumn: '6 / 7', gridRow: '2 / 3' },
+  { id: 5, gridColumn: '4 / 6', gridRow: '3 / 5' },
+  { id: 6, gridColumn: '1 / 3', gridRow: '4 / 6' },
+  { id: 7, gridColumn: '4 / 6', gridRow: '5 / 7' },
+];
+
+const COLLAGE_SLOT_COUNT = COLLAGE_SLOTS.length;
+
+const resolveImageUrl = (url) => {
+  if (!url) return null;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+};
+
+const productMainImage = (product) => {
+  const gallery = resolveCardImages(product);
+  const primary = gallery[0];
+  return primary ? resolveImageUrl(primary) : null;
+};
+
+const shuffle = (items) => {
+  const next = [...items];
+  for (let i = next.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [next[i], next[j]] = [next[j], next[i]];
+  }
+  return next;
+};
+
 export default function WhoWeAre() {
-  const videoRef = useRef(null);
+  const [collageImages, setCollageImages] = useState([]);
+  const cellBorderAccents = useMemo(
+    () => COLLAGE_SLOTS.map(() => (Math.random() < 0.5 ? 'blue' : 'maroon')),
+    []
+  );
 
-  // Only download/play the (large) clip while it is on screen
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video || typeof IntersectionObserver === 'undefined') return undefined;
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let mounted = true;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          if (!reduceMotion) video.play().catch(() => {});
-        } else {
-          video.pause();
+    const load = async () => {
+      try {
+        let products = [];
+        try {
+          const featured = await productService.getFeaturedProducts();
+          if (Array.isArray(featured) && featured.length > 0) {
+            products = featured;
+          }
+        } catch {
+          /* use catalog list */
         }
-      },
-      { threshold: 0.35 }
-    );
-    observer.observe(video);
-    return () => observer.disconnect();
+
+        if (products.length < COLLAGE_SLOT_COUNT) {
+          const page = await productService.getProducts({ page: 1, page_size: 48 });
+          const catalog = Array.isArray(page?.items) ? page.items : [];
+          const seen = new Set(products.map((p) => p.id));
+          for (const p of catalog) {
+            if (p?.id != null && seen.has(p.id)) continue;
+            if (p?.id != null) seen.add(p.id);
+            products.push(p);
+          }
+        }
+
+        const imageUrls = shuffle(
+          products.map(productMainImage).filter(Boolean)
+        ).slice(0, COLLAGE_SLOT_COUNT);
+
+        if (mounted) setCollageImages(imageUrls);
+      } catch {
+        if (mounted) setCollageImages([]);
+      }
+    };
+
+    load();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
     <section className={`${styles.section} ${styles.aboutSection}`}>
       <div className={styles.aboutGrid}>
-        <div className={styles.aboutVideoFrame}>
-          <video
-            ref={videoRef}
-            className={styles.aboutVideo}
-            src="/assets/intro.mp4"
-            poster="/assets/intro-poster.jpg"
-            muted
-            loop
-            playsInline
-            controls
-            preload="none"
-            aria-label="A look inside the ChairDekho chair shop in Nalasopara West"
-          />
+        <div className={styles.aboutCollage} aria-hidden="true">
+          {COLLAGE_SLOTS.map((slot, index) => (
+            <div
+              key={slot.id}
+              className={`${styles.aboutCollageCell} ${
+                cellBorderAccents[index] === 'blue'
+                  ? styles.aboutCollageCellBlue
+                  : styles.aboutCollageCellMaroon
+              }`}
+              style={{
+                gridColumn: slot.gridColumn,
+                gridRow: slot.gridRow,
+              }}
+              data-collage-slot={slot.id}
+            >
+              {collageImages[index] ? (
+                <img src={collageImages[index]} alt="" loading="lazy" decoding="async" />
+              ) : null}
+            </div>
+          ))}
         </div>
 
         <div className={styles.aboutContent}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>WHO WE ARE</h2>
             <p className={styles.sectionSubtitle}>
-              The biggest chair wholesale shop in Vasai - Virar
+              {BRAND_DOMAIN} · {POWERED_BY_TAGLINE}
             </p>
           </div>
 
           <p className={styles.aboutText}>
-            ChairDekho gives you all types of chairs under one roof – regular plastic chairs,
-            arm and armless chairs, stacking chairs, dining sets, stools, tables and kids’
-            chairs, for indoors and outdoors.
+            {BRAND} brings plastic chairs, stools, tables and everyday plastic household items
+            together with steel furniture, racks and steel products — for homes, shops, offices
+            and events.
           </p>
           <p className={styles.aboutText}>
-            Furnishing a home, housing society, office, shop or event? We supply single pieces
-            and bulk orders at wholesale prices, with durable, quality-checked chairs from
-            trusted brands like Prime.
+            Need a single piece or a bulk order? We offer retail and wholesale pricing on quality
+            checked products from trusted manufacturers.
           </p>
           <p className={styles.aboutText}>
-            Visit us near Umadevi Mandir, Nalasopara West, or order online for quick delivery
-            across Vasai, Virar and Nalasopara.
+            Visit our {LEGACY_BRAND} store or order on {BRAND_DOMAIN} for delivery across India.
           </p>
 
           <div className={styles.aboutActions}>
-            <Link href="/shop" className={`${styles.aboutBtn} ${styles.aboutBtnPrimary}`}>
-              Shop Now <ArrowRight size={16} aria-hidden="true" />
-            </Link>
-            <a href={PHONE_HREF} className={`${styles.aboutBtn} ${styles.aboutBtnSecondary}`}>
-              <Phone size={16} aria-hidden="true" /> Call Now
-            </a>
+            <CTAButton href="/shop">
+              Shop now <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+            </CTAButton>
+            <CTAButton href={PHONE_HREF}>
+              <Phone size={16} strokeWidth={2} aria-hidden="true" /> Call now
+            </CTAButton>
           </div>
         </div>
       </div>

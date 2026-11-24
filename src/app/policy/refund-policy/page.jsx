@@ -2,12 +2,11 @@ import styles from './refund.module.css';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import PageHeroBanner from '@/components/PageHeroBanner/PageHeroBanner';
-import { pageMetadata } from '@/lib/seo';
+import { BRAND, CONTACT, pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Returns & Refunds Policy | ChairDekho',
-  description:
-    'Learn about ChairDekho return eligibility, refund timelines, exchange process, and how to initiate a return.',
+  title: `Returns & Refunds Policy | ${BRAND}`,
+  description: `Learn about ${BRAND} return eligibility, refund timelines, exchange process, and how to initiate a return.`,
   path: '/policy/refund-policy',
 });
 
@@ -53,7 +52,7 @@ export default function RefundPolicyPage() {
           <div className={styles.steps}>
             <div className={styles.step}>
               <span className={styles.stepNumber}>1</span>
-              <span className={styles.stepText}>Contact our support team at <strong>brjangu29@gmail.com</strong> or call <strong>+91 96991 64131</strong> with your order number and reason for return.</span>
+              <span className={styles.stepText}>Contact our support team at <strong>{CONTACT.email}</strong> or call <strong>{CONTACT.phone}</strong> with your order number and reason for return.</span>
             </div>
             <div className={styles.step}>
               <span className={styles.stepNumber}>2</span>
@@ -87,7 +86,7 @@ export default function RefundPolicyPage() {
 
           <h2 className={styles.sectionHeading}>5. Exchanges</h2>
           <p className={styles.paragraph}>
-            We offer exchanges for a different colour or model of chair, subject to stock availability. To request an exchange, contact our support team within the 7-day return window. If the desired variant is unavailable, we will process a refund instead.
+            We offer exchanges for a different colour or model, subject to stock availability. To request an exchange, contact our support team within the 7-day return window. If the desired variant is unavailable, we will process a refund instead.
           </p>
 
           <h2 className={styles.sectionHeading}>6. Damaged or Incorrect Products</h2>
@@ -105,8 +104,8 @@ export default function RefundPolicyPage() {
             For any return or refund-related queries, please reach out to us:
           </p>
           <ul className={styles.list}>
-            <li><strong>Email:</strong> brjangu29@gmail.com</li>
-            <li><strong>Phone:</strong> +91 96991 64131</li>
+            <li><strong>Email:</strong> {CONTACT.email}</li>
+            <li><strong>Phone:</strong> {CONTACT.phone}</li>
             <li><strong>Hours:</strong> Mon – Sat, 10:00 AM – 7:00 PM IST</li>
           </ul>
         </div>

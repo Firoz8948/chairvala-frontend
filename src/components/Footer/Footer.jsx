@@ -1,33 +1,34 @@
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
+import FooterFaq from '@/components/FooterFaq/FooterFaq';
 import Logo from '@/components/Logo/Logo';
 import { FEATURES } from '@/lib/features';
 import SocialLinks from '@/components/SocialLinks/SocialLinks';
-import { CONTACT } from '@/lib/seo';
+import { BRAND, BRAND_DOMAIN, CONTACT, POWERED_BY_TAGLINE } from '@/lib/seo';
 import styles from './footer.module.css';
 
 export default function Footer() {
   return (
     <>
+      <FooterFaq />
       <footer className={styles.footer}>
         <div className={styles.inner}>
           <div className={styles.brandCol}>
-            <Logo size="lg" className={styles.brandLogoLink} />
+            <Logo size="lg" showTagline className={styles.brandLogoWrap} />
+            <p className={`${styles.gstin} ${styles.gstBelowTagline}`}>
+              GST - {CONTACT.gstin}
+            </p>
             <p className={styles.brandDesc}>
-              All types of chairs at affordable prices – plastic, arm, dining,
-              garden, office and kids chairs, delivered across Vasai, Virar and
-              Nalasopara.
+              {BRAND_DOMAIN} — plastic chairs, plastic stools & tables, household plastic items,
+              steel furniture, racks and steel products at affordable prices — delivered across
+              India. {POWERED_BY_TAGLINE}.
             </p>
             <SocialLinks className={styles.socialRow} />
-            <div className={styles.brandCopyright}>
-              <p>© {new Date().getFullYear()} ChairDekho. All rights reserved.</p>
-              <p className={styles.brandOf}>A brand of PrimeCraft</p>
-              <p className={styles.gstin}>GST - {CONTACT.gstin}</p>
-            </div>
           </div>
 
           <div className={styles.quickCol}>
-            <h3 className={styles.colTitle}>Quick Links</h3>
+            <h3 className={styles.colTitle} data-brand-split="off">
+              Quick Links
+            </h3>
             <div className={styles.linkList}>
               <Link href="/shop" className={styles.link}>
                 Shop Collection
@@ -69,37 +70,11 @@ export default function Footer() {
         </div>
 
         <div className={styles.bottomBar}>
-          <div className={styles.copyrightGroup}>
-            <span>© {new Date().getFullYear()} ChairDekho. All rights reserved.</span>
-            <span className={styles.brandOf}>A brand of PrimeCraft</span>
-            <span className={styles.gstin}>GST - {CONTACT.gstin}</span>
-          </div>
+          <p className={styles.copyrightLine}>
+            © {new Date().getFullYear()} {BRAND}. All rights reserved. {POWERED_BY_TAGLINE}.
+          </p>
         </div>
       </footer>
-
-      <div className={styles.credit}>
-        <span>
-          Developed &amp; Managed by{' '}
-          <a
-            href="https://zyatechpvt.website"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.creditLink}
-          >
-            Zyatech Private Limited
-          </a>
-        </span>
-        <a
-          href="https://zyatechpvt.website"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.creditBtn}
-          aria-label="Visit Zyatech Private Limited website"
-          title="zyatechpvt.website"
-        >
-          <ArrowUpRight size={16} strokeWidth={2.25} aria-hidden="true" />
-        </a>
-      </div>
     </>
   );
 }

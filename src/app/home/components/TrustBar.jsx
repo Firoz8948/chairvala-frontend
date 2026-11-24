@@ -6,12 +6,12 @@ export default function TrustBar() {
     {
       icon: <ShieldCheck size={22} />,
       title: 'Quality Checked',
-      desc: 'Sturdy chairs, every piece inspected',
+      desc: 'Quality plastic & steel, every piece inspected',
     },
     {
       icon: <Truck size={22} />,
       title: 'Fast Local Delivery',
-      desc: 'Quick delivery in Vasai Virar',
+      desc: 'Fast delivery across India',
     },
     {
       icon: <RotateCcw size={22} />,
