@@ -8,7 +8,14 @@ import toast from 'react-hot-toast';
 import { ArrowLeft } from 'lucide-react';
 import authService from '@/lib/services/auth';
 import { BRAND } from '@/lib/seo';
+import Logo from '@/components/Logo/Logo';
 import styles from './login.module.css';
+
+const LOGIN_VISUAL_DESKTOP =
+  'https://chairvala.b-cdn.net/basic_assets/Espresso%20Patio%20Set%20with%20Colorful%20Chairs%20(1).png';
+
+const LOGIN_VISUAL_MOBILE =
+  'https://chairvala.b-cdn.net/basic_assets/Colorful%20Rattan%20Patio%20Table%20Set%20(1).png';
 
 const OTP_LENGTH = 4;
 const RESEND_SECONDS = 30;
@@ -195,29 +202,34 @@ export default function CustomerLoginScreen() {
   }[step];
 
   return (
-    <div className={styles.page}>
-      <div className={styles.hero}>
-        <Image
-          src="/images/trust/quality.webp"
-          alt={`${BRAND} – plastic and steel products`}
-          width={1600}
-          height={600}
-          priority
-          sizes="(max-width: 960px) 100vw, 960px"
-          className={styles.heroImage}
-        />
-        <Link href="/" className={styles.backLink} aria-label="Back to store">
-          <ArrowLeft size={18} strokeWidth={1.9} />
-        </Link>
-      </div>
+    <div className={styles.container}>
+      <div className={styles.split}>
+        <aside className={styles.visual} aria-hidden="true">
+          <Image
+            src={LOGIN_VISUAL_DESKTOP}
+            alt=""
+            fill
+            priority
+            sizes="(min-width: 900px) 40vw, 0"
+            className={styles.visualImage}
+          />
+        </aside>
 
-      <main className={styles.main}>
-        {checkingAuth ? (
-          <p className={styles.subtitle}>Loading…</p>
-        ) : (
-          <>
-            <h1 className={styles.title}>{heading.title}</h1>
-            <p className={styles.subtitle}>{heading.subtitle}</p>
+        <div className={styles.page}>
+          <main className={styles.main} aria-live="polite">
+            <div className={styles.topBar}>
+              <Link href="/" className={styles.backLink} aria-label="Back to store">
+                <ArrowLeft size={18} strokeWidth={1.9} />
+              </Link>
+            </div>
+
+            {checkingAuth ? (
+              <p className={styles.subtitle}>Loading…</p>
+            ) : (
+              <>
+                <Logo size="sm" className={styles.logoWrap} />
+                <h1 className={styles.title}>{heading.title}</h1>
+                <p className={styles.subtitle}>{heading.subtitle}</p>
 
             {step === 'phone' && (
               <form className={styles.form} onSubmit={handleSendOtp}>
@@ -327,14 +339,27 @@ export default function CustomerLoginScreen() {
               </form>
             )}
 
-            <p className={styles.legalNote}>
-              By continuing, you agree to our{' '}
-              <Link href="/policy/terms-and-conditions">Terms</Link> and{' '}
-              <Link href="/policy/privacy-policy">Privacy Policy</Link>.
-            </p>
-          </>
-        )}
-      </main>
+                <p className={styles.legalNote}>
+                  By continuing, you agree to our{' '}
+                  <Link href="/policy/terms-and-conditions">Terms</Link> and{' '}
+                  <Link href="/policy/privacy-policy">Privacy Policy</Link>.
+                </p>
+              </>
+            )}
+          </main>
+        </div>
+
+        <aside className={styles.visualMobile} aria-hidden="true">
+          <Image
+            src={LOGIN_VISUAL_MOBILE}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className={styles.visualImage}
+          />
+        </aside>
+      </div>
     </div>
   );
 }

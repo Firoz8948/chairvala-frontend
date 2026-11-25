@@ -121,10 +121,6 @@ export default function AdminLoginPage() {
             {loading ? 'Authenticating...' : 'Sign In'}
           </button>
         </form>
-
-        <div className={styles.hint}>
-          Default credentials: <strong>admin</strong> / <strong>admin</strong>
-        </div>
         </main>
         <aside className={styles.visualMobile} aria-hidden="true">
           <Image
