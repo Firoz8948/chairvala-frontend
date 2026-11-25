@@ -1,6 +1,6 @@
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
-import { fontSans, fontVariables } from '@/lib/fonts';
+import { fontSans } from '@/lib/fonts';
 import Providers from '@/components/Providers';
 import JsonLd from '@/components/Seo/JsonLd';
 import {
@@ -57,8 +57,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en-IN" className={fontVariables}>
-      <body className={fontSans.className}>
+    <html lang="en-IN">
+      <body className={fontSans.className || undefined}>
         <JsonLd data={[buildOrganizationJsonLd(), buildWebsiteJsonLd()]} />
         <Providers>
           <Toaster position="top-right" />
