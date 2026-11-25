@@ -17,7 +17,7 @@ export const BRAND = 'Chairvala';
 /** Public site name including domain suffix where needed. */
 export const BRAND_DOMAIN = 'Chairvala.com';
 /** Physical retail brand — Chairvala.com is powered by this store. */
-export const LEGACY_BRAND = 'Shree Ram Steel';
+export const LEGACY_BRAND = 'Shree Krishna Steel';
 
 /** From logo wordmark (CHAIR / VALA). */
 export const BRAND_BLUE = '#0000A5';
@@ -36,16 +36,21 @@ export const CONTACT = {
   phoneIntl: '+91-90040-00201',
   whatsapp: '919004000201',
   email: 'Sksteel2929@gmail.com',
-  street: 'Umadevi Mandir, Umrale, Samel Pada',
-  postalCode: '401203',
-  address: 'Umadevi Mandir, Umrale, Samel Pada, 401203, India',
-  mapsUrl: 'https://maps.app.goo.gl/U9bcHmccejspLza47',
-  gstin: '27AQEPR1415Q1ZF',
+  street:
+    'C2, Gokuldham row house Society, Near shivkrupa Sweets, Jatra Nandur Naka Road',
+  addressLocality: 'Nashik',
+  addressRegion: 'Maharashtra',
+  postalCode: '422003',
+  address:
+    'C2, Gokuldham row house Society, Near shivkrupa Sweets, Jatra Nandur Naka Road, Nashik, Nashik, Maharashtra, 422003',
+  mapsUrl:
+    'https://www.google.com/maps/search/?api=1&query=C2%2C+Gokuldham+row+house+Society%2C+Near+shivkrupa+Sweets%2C+Jatra+Nandur+Naka+Road%2C+Nashik%2C+Maharashtra+422003',
+  gstin: '27BCWPP2627K1ZV',
 };
 export const HOME_TITLE =
   'Plastic Chairs, Plastic Products & Steel Items at Best Price | Chairvala.com';
 export const HOME_DESCRIPTION =
-  'Chairvala.com — shop plastic chairs, plastic stools, tables, household plastic items, steel furniture, racks and steel products at affordable prices. Powered by Shree Ram Steel. Pan-India delivery. Bulk orders welcome.';
+  `Chairvala.com — shop plastic chairs, plastic stools, tables, household plastic items, steel furniture, racks and steel products at affordable prices. ${POWERED_BY_TAGLINE}. Pan-India delivery. Bulk orders welcome.`;
 export const SITE_KEYWORDS = [
   'Chairvala',
   'Chairvala.com',
@@ -123,7 +128,7 @@ export const truncate = (text, max) => {
 };
 
 const LEGACY_BRAND_SUFFIX =
-  /\s*[|–—-]\s*(shree\s*ram\s*steel|chairvala(\.com)?)\s*$/i;
+  /\s*[|–—-]\s*(shree\s*(?:krishna|ram)\s*steel|chairvala(\.com)?)\s*$/i;
 
 /** Drops legacy "| BRAND" suffixes admins add to product names. */
 export const cleanProductName = (name) =>
@@ -456,6 +461,8 @@ export function buildOrganizationJsonLd() {
     address: {
       '@type': 'PostalAddress',
       streetAddress: CONTACT.street,
+      addressLocality: CONTACT.addressLocality,
+      addressRegion: CONTACT.addressRegion,
       postalCode: CONTACT.postalCode,
       addressCountry: 'IN',
     },

@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import styles from './admin.module.css';
 import authService from '@/lib/services/auth';
 import { FEATURES } from '@/lib/features';
-import { BRAND } from '@/lib/seo';
+import { BRAND, LEGACY_BRAND } from '@/lib/seo';
 
 const BARE_PAGES = ['/admin/login', '/admin/switch'];
 
@@ -338,7 +338,7 @@ export default function AdminShell({ children }) {
                 <IconMenu />
               </button>
             )}
-            <div className={styles.headerTitle}>Shree Ram Steel</div>
+            <div className={styles.headerTitle}>{LEGACY_BRAND}</div>
           </div>
           <span className={styles.headerUser}>Chairvala</span>
         </header>

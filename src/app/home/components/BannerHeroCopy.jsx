@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import CTAButton from '@/components/CTAButton';
 import ctaStyles from '@/components/CTAButton/ctaButton.module.css';
+import { LEGACY_BRAND } from '@/lib/seo';
 import styles from './banner.module.css';
 
 const COPY = {
@@ -24,7 +25,7 @@ export default function BannerHeroCopy({ href = '/shop', variant = 'desktop' }) 
           >
             {ctaLabel} <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
           </CTAButton>
-          <p className={styles.heroByline}>By Shree Ram Steel</p>
+          <p className={styles.heroByline}>By {LEGACY_BRAND}</p>
         </div>
       </div>
     );
@@ -39,7 +40,7 @@ export default function BannerHeroCopy({ href = '/shop', variant = 'desktop' }) 
           <CTAButton href={href} variant="dark">
             {ctaLabel} <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
           </CTAButton>
-          <p className={styles.heroByline}>By Shree Ram Steel</p>
+          <p className={styles.heroByline}>By {LEGACY_BRAND}</p>
         </div>
       </div>
     </div>
